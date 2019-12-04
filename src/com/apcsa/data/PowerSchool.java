@@ -49,7 +49,7 @@ public class PowerSchool {
                     }
                 }
             } catch (SQLException e) {
-                e.printStackTrace();    // TODO replace with more graceful error handling
+                e.printStackTrace();
             }
 
             // build database if needed
@@ -88,7 +88,7 @@ public class PowerSchool {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();        // TODO replace with error message and remove
+            e.printStackTrace();
         }
 
         return null;
@@ -113,7 +113,7 @@ public class PowerSchool {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();        // TODO replace with error message and remove
+            e.printStackTrace();
         }
 
         return user;
@@ -138,7 +138,7 @@ public class PowerSchool {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();        // TODO replace with error message and remove
+            e.printStackTrace();
         }
 
         return user;
@@ -163,7 +163,7 @@ public class PowerSchool {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();        // TODO replace with error message and remove
+            e.printStackTrace();
         }
 
         return user;
@@ -206,7 +206,7 @@ public class PowerSchool {
                 return -1;
             }
         } catch (SQLException e) {
-            e.printStackTrace();        // TODO
+            e.printStackTrace();
 
             return -1;
         }
