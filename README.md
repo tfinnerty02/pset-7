@@ -59,7 +59,6 @@ Many of these use cases will familiar to you based on your own experiences with 
 * Login to an account
 * View enrollment by course
 * Add assignment
-* Edit assignment
 * Delete assignment
 * Enter grade for assignment
 * Change password
