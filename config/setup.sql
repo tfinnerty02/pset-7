@@ -148,7 +148,7 @@ INSERT INTO teachers (first_name, last_name, department_id, user_id) VALUES ("Ry
 INSERT INTO teachers (first_name, last_name, department_id, user_id) VALUES ("Moriah", "Cohen", 2, 5);
 INSERT INTO teachers (first_name, last_name, department_id, user_id) VALUES ("Savage", "Paul", 3, 6);
 INSERT INTO teachers (first_name, last_name, department_id, user_id) VALUES ("Lawrence", "Miranda", 4, 7);
-INSERT INTO teachers (first_name, last_name, department_id, user_id) VALUES ("Delmonaco", "Tara", 5, 8);
+INSERT INTO teachers (first_name, last_name, department_id, user_id) VALUES ("Tara", "Delmonaco", 5, 8);
 INSERT INTO teachers (first_name, last_name, department_id, user_id) VALUES ("Andrew", "Colasanti", 6, 9);
 
 DROP TABLE IF EXISTS students;
