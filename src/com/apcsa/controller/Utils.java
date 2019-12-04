@@ -25,7 +25,7 @@ public class Utils {
                 pwd.append(Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(1));
             }
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();    // TODO replace with error message and remove
+            e.printStackTrace();
         }
 
         return pwd.toString();
