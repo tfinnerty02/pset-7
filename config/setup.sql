@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS users;
 CREATE TABLE IF NOT EXISTS users (
-	user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER PRIMARY KEY AUTOINCREMENT,
     account_type TEXT NOT NULL,
     username TEXT UNIQUE NOT NULL,
     auth TEXT NOT NULL,
@@ -107,7 +107,7 @@ INSERT INTO users (account_type, username, auth, last_login) VALUES ("student", 
 
 DROP TABLE IF EXISTS departments;
 CREATE TABLE IF NOT EXISTS departments (
-	department_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    department_id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT UNIQUE NOT NULL
 );
 
@@ -120,7 +120,7 @@ INSERT INTO departments (title) VALUES ("Science");
 
 DROP TABLE IF EXISTS administrators;
 CREATE TABLE IF NOT EXISTS administrators (
-	administrator_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    administrator_id INTEGER PRIMARY KEY AUTOINCREMENT,
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     job_title TEXT NOT NULL,
@@ -133,7 +133,7 @@ INSERT INTO administrators (first_name, last_name, job_title, user_id) VALUES ("
 
 DROP TABLE IF EXISTS teachers;
 CREATE TABLE IF NOT EXISTS teachers (
-	teacher_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    teacher_id INTEGER PRIMARY KEY AUTOINCREMENT,
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     department_id INTEGER NOT NULL,
@@ -149,7 +149,7 @@ INSERT INTO teachers (first_name, last_name, department_id, user_id) VALUES ("La
 
 DROP TABLE IF EXISTS students;
 CREATE TABLE IF NOT EXISTS students (
-	student_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    student_id INTEGER PRIMARY KEY AUTOINCREMENT,
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     graduation INTEGER NOT NULL,
@@ -253,7 +253,7 @@ INSERT INTO students (first_name, last_name, graduation, grade_level, gpa, class
 
 DROP TABLE IF EXISTS courses;
 CREATE TABLE IF NOT EXISTS courses (
-	course_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    course_id INTEGER PRIMARY KEY AUTOINCREMENT,
     department_id INTEGER NOT NULL,
     course_no TEXT UNIQUE NOT NULL,
     title TEXT UNIQUE NOT NULL,
@@ -292,9 +292,9 @@ INSERT INTO courses (department_id, course_no, title, credit_hours, weight, enro
 
 DROP TABLE IF EXISTS course_grades;
 CREATE TABLE IF NOT EXISTS course_grades (
-	course_id INTEGER NOT NULL,
-	student_id INTEGER NOT NULL,
-	mp1 REAL,
+    course_id INTEGER NOT NULL,
+    student_id INTEGER NOT NULL,
+    mp1 REAL,
     mp2 REAL,
     midterm_exam REAL,
     mp3 REAL,
@@ -891,7 +891,7 @@ INSERT INTO course_grades (course_id, student_id) VALUES (22, 97);
 
 DROP TABLE IF EXISTS assignments;
 CREATE TABLE IF NOT EXISTS assignments (
-	course_id INTEGER NOT NULL,
+    course_id INTEGER NOT NULL,
     assignment_id INTEGER NOT NULL,
     title TEXT NOT NULL,
     point_value INTEGER NOT NULL,
@@ -901,7 +901,7 @@ CREATE TABLE IF NOT EXISTS assignments (
 
 DROP TABLE IF EXISTS assignment_grades;
 CREATE TABLE IF NOT EXISTS assignment_grades (
-	course_id INTEGER NOT NULL,
+    course_id INTEGER NOT NULL,
     assignment_id INTEGER NOT NULL,
     student_id INTEGER NOT NULL,
     points_earned INTEGER NOT NULL,
