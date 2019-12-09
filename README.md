@@ -91,6 +91,22 @@ In developing this application, you'll need to meet specific requirements for ea
 
 ### User Interface
 
+You'll be creating a command line interface (CLI) for the application. Each user will be presented with standard menu-style options. The details of those menus, of course, will largely depend on the type of user currently logged into the system.
+
+#### Root
+
+Coming soon!
+
+#### Administrator
+
+Coming soon!
+
+#### Teacher
+
+Coming soon!
+
+#### Student
+
 Coming soon!
 
 ### Data Persistence
