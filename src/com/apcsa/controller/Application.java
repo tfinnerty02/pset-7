@@ -48,9 +48,10 @@ public class Application {
                     ? PowerSchool.getTeacher(activeUser) : activeUser.isStudent()
                     ? PowerSchool.getStudent(activeUser) : activeUser.isRoot()
                     ? activeUser : null;
-
                 if (isFirstLogin() && !activeUser.isRoot()) {
                     // first-time users need to change their passwords from the default provided
+                	System.out.print("Enter a new password: ");
+                	password = in.next();
                 }
 
                 // create and show the user interface
