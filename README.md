@@ -95,7 +95,72 @@ You'll be creating a command line interface (CLI) for the application. Each user
 
 #### Root
 
-Coming soon!
+After logging in as the root user, you should be presented with a welcome message and a standard menu of options.
+
+```
+Hello, again, Root!
+
+[1] Reset user password.
+[2] Factory reset database.
+[3] Logout.
+[4] Shutdown.
+
+:::
+```
+
+If you choose the first option, you'll need to enter the username whose password needs to be reset and confirm your selection.
+
+```
+Username: rwilson
+
+Are you sure you want to reset the password for rwilson? (y/n)
+```
+
+You'll need to enter `y` or `n` (case-insensitive). Anything else causes the prompt to repeat. If you enter `y`, the user's password is reset to its default value (i.e., his or her username, in this case `rwilson`). The last login timestamp is also reset to `0000-00-00 00:00:00.000`.
+
+You'll receive a status message indicating the success of the operation, before seeing the original menu options again.
+
+```
+Successfully reset password for rwilson.
+```
+
+If you choose the second option, you'll need to confirm your desire to reset the database. This operation is irreversible, and you'll lose any and all changes previously made.
+
+```
+Are you sure you want to reset all settings and data? (y/n)
+```
+
+As always, you'll receive a status message after entering `y`.
+
+```
+Successfully reset database.
+```
+
+If you choose the third option, you'll need to confirm your intent to logout of the application.
+
+```
+Are you sure you want to logout? (y/n)
+```
+
+After entering `y`, you'll be returned to the initial login screen.
+
+```
+Username: 
+```
+
+If you choose the fourth option, you'll be asked to confirm your selection.
+
+```
+Are you sure? (y/n)
+```
+
+After entering `y`, the system shuts down.
+
+```
+Goodbye!
+```
+
+The root user is the only user who shouldn't be prompted to reset their password on the initial login (more on this later).
 
 #### Administrator
 
