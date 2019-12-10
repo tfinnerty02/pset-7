@@ -96,9 +96,9 @@ You'll be creating a command line interface (CLI) for the application. Each user
 While the broad strokes are outlined below, the finer details can be found in the demo application in the `samples` directory. To run the application, download the `demo.zip` file and run the following commands from the terminal.
 
 ```
-unzip demo.zip
-cd demo
-java -jar powerschool.jar
+$ unzip demo.zip
+$ cd demo
+$ java -jar powerschool.jar
 ```
 
 #### Root
