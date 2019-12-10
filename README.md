@@ -93,7 +93,13 @@ In developing this application, you'll need to meet specific requirements for ea
 
 You'll be creating a command line interface (CLI) for the application. Each user will be presented with standard menu-style options. The details of those menus, of course, will largely depend on the type of user currently logged into the system.
 
-While the broad strokes are outlined below, the finer details can be found in the demo application in the `samples` directory.
+While the broad strokes are outlined below, the finer details can be found in the demo application in the `samples` directory. To run the application, download the `demo.zip` file and run the following commands from the terminal.
+
+```
+unzip demo.zip
+cd demo
+java -jar powerschool.jar
+```
 
 #### Root
 
