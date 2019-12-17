@@ -44,32 +44,36 @@ public class Application {
 
             // if login is successful, update generic user to administrator, teacher, or student
 
-            if (login(username, password)) {
-                activeUser = activeUser.isAdministrator()
-                    ? PowerSchool.getAdministrator(activeUser) : activeUser.isTeacher()
-                    ? PowerSchool.getTeacher(activeUser) : activeUser.isStudent()
-                    ? PowerSchool.getStudent(activeUser) : activeUser.isRoot()
-                    ? activeUser : null;
-                    
-                if (isFirstLogin() && !activeUser.isRoot()) {
-                    // first-time users need to change their passwords from the default provided
-                	System.out.println("Test");
-                }
+            try {
+                if (login(username, password)) {
+                    activeUser = activeUser.isAdministrator()
+                        ? PowerSchool.getAdministrator(activeUser) : activeUser.isTeacher()
+                        ? PowerSchool.getTeacher(activeUser) : activeUser.isStudent()
+                        ? PowerSchool.getStudent(activeUser) : activeUser.isRoot()
+                        ? activeUser : null;
+                        
+                    if (isFirstLogin() && !activeUser.isRoot()) {
+                        // first-time users need to change their passwords from the default provided
+                    	System.out.println("Test");
+                    }
 
-                // create and show the user interface
-                //
-                // remember, the interface will be difference depending on the type
-                // of user that is logged in (root, administrator, teacher, student)
-                
-                if (activeUser.isRoot()) {
-                	// print the root display thing here - maybe switch statement?
+                    // create and show the user interface
+                    //
+                    // remember, the interface will be difference depending on the type
+                    // of user that is logged in (root, administrator, teacher, student)
+                    
+                    if (activeUser.isRoot()) {
+                    	// print the root display thing here - maybe switch statement?
+                    }
+                } else {
+                	System.out.println(login(username, password));
+                	System.out.println(PowerSchool.login(username, password));
+                    System.out.println("\nInvalid username and/or password.");
                 }
-            } else {
-            	System.out.println(login(username, password));
-            	System.out.println(PowerSchool.login(username, password));
-            	// it's returning null for login function which might mean there's an issue with the connection w/database
-                System.out.println("\nInvalid username and/or password.");
+            } catch (Exception e) {
+                shutdown(e);
             }
+
         }
     }
 
