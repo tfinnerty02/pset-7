@@ -68,16 +68,6 @@ public class Application {
              * Displays an user type-specific menu with which the user
              * navigates and interacts with the application.
              */
-
-            public void createAndShowUI() {
-                System.out.println("\nHello, again, " + activeUser.getFirstName() + "!");
-
-                if (activeUser.isRoot()) {
-                    showRootUI();
-                } else {
-                    // TODO - add cases for admin, teacher, student, and unknown
-                }
-            }
             
 //            try {
 //                if (login(username, password)) {
@@ -109,6 +99,16 @@ public class Application {
 //                shutdown(e);
 //            }
 
+        }
+    }
+    
+    public void createAndShowUI() {
+        System.out.println("\nHello, again, " + activeUser.getFirstName() + "!");
+
+        if (activeUser.isRoot()) {
+            showRootUI();
+        } else {
+            // TODO - add cases for admin, teacher, student, and unknown
         }
     }
 
