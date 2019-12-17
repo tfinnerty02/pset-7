@@ -11,6 +11,8 @@ public class User {
     private String password;
     private String lastLogin;
 
+
+    
     /**
      * Creates an instance of the User class.
      *
@@ -23,6 +25,15 @@ public class User {
              rs.getString("username"),
              rs.getString("auth"),
              rs.getString("last_login")
+        );
+    }
+    
+    public User(User user) {
+        this(user.getUserId(),
+             user.getAccountType(),
+             user.getUsername(),
+             user.getPassword(),
+             user.getLastLogin()
         );
     }
 

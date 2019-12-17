@@ -5,10 +5,11 @@ import java.sql.ResultSet;
 import com.apcsa.model.User;
 
 public class Teacher extends User {
-
-    public Teacher(User user, ResultSet rs) {
+	
+	public Teacher(User user, ResultSet rs) throws SQLException {
 		// TODO Auto-generated constructor stub
 	}
+	
 	private int teacherId;
     private int departmentId;
     private String firstName;

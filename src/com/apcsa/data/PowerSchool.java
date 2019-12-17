@@ -71,12 +71,12 @@ public class PowerSchool {
     public static User login(String username, String password) {
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(QueryUtils.LOGIN_SQL)) {
-
             stmt.setString(1, username);
             stmt.setString(2, Utils.getHash(password));
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
+                	// it's not doing this
                     Timestamp ts = new Timestamp(new Date().getTime());
                     int affected = PowerSchool.updateLastLogin(conn, username, ts);
 
