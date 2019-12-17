@@ -54,25 +54,60 @@ public class Application {
                         
                     if (isFirstLogin() && !activeUser.isRoot()) {
                         // first-time users need to change their passwords from the default provided
-                    	System.out.println("Test");
                     }
-
-                    // create and show the user interface
-                    //
-                    // remember, the interface will be difference depending on the type
-                    // of user that is logged in (root, administrator, teacher, student)
                     
-                    if (activeUser.isRoot()) {
-                    	// print the root display thing here - maybe switch statement?
-                    }
+                    createAndShowUI();
                 } else {
-                	System.out.println(login(username, password));
-                	System.out.println(PowerSchool.login(username, password));
                     System.out.println("\nInvalid username and/or password.");
                 }
             } catch (Exception e) {
                 shutdown(e);
             }
+            
+            /**
+             * Displays an user type-specific menu with which the user
+             * navigates and interacts with the application.
+             */
+
+            public void createAndShowUI() {
+                System.out.println("\nHello, again, " + activeUser.getFirstName() + "!");
+
+                if (activeUser.isRoot()) {
+                    showRootUI();
+                } else {
+                    // TODO - add cases for admin, teacher, student, and unknown
+                }
+            }
+            
+//            try {
+//                if (login(username, password)) {
+//                    activeUser = activeUser.isAdministrator()
+//                        ? PowerSchool.getAdministrator(activeUser) : activeUser.isTeacher()
+//                        ? PowerSchool.getTeacher(activeUser) : activeUser.isStudent()
+//                        ? PowerSchool.getStudent(activeUser) : activeUser.isRoot()
+//                        ? activeUser : null;
+//                        
+//                    if (isFirstLogin() && !activeUser.isRoot()) {
+//                        // first-time users need to change their passwords from the default provided
+//                    	System.out.println("Test");
+//                    }
+//
+//                    // create and show the user interface
+//                    //
+//                    // remember, the interface will be difference depending on the type
+//                    // of user that is logged in (root, administrator, teacher, student)
+//                    
+//                    if (activeUser.isRoot()) {
+//                    	
+//                    }
+//                } else {
+//                	System.out.println(login(username, password));
+//                	System.out.println(PowerSchool.login(username, password));
+//                    System.out.println("\nInvalid username and/or password.");
+//                }
+//            } catch (Exception e) {
+//                shutdown(e);
+//            }
 
         }
     }
