@@ -9,6 +9,8 @@ public class Application {
     private Scanner in;
     private User activeUser;
 
+    enum RootAction { PASSWORD, DATABASE, LOGOUT, SHUTDOWN }
+    
     /**
      * Creates an instance of the Application class, which is responsible for interacting
      * with the user via the command line interface.
