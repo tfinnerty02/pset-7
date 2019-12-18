@@ -35,5 +35,13 @@ public class Student extends User {
     private double gpa;
     private String firstName;
     private String lastName;
+    
+    public double getGpa() {
+    	return gpa;
+    }
+    
+    public void setClassRank(int rank) {
+    	classRank = rank;
+    }
 	
 }

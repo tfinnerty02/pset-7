@@ -54,4 +54,21 @@ public class QueryUtils {
     public static final String GET_STUDENT_SQL =
         "SELECT * FROM students " +
             "WHERE user_id = ?";
+    /*
+     * Resets another user's password and last login timestamp.
+     */
+        
+    //
+    // upset the users table
+    // two columns need to be updated
+    //          - auth
+    //          - last_login
+    //
+    // auth will be set to the hash of the user's username
+    // last_login will be reverted to 0000-00-00 00:00:00.000
+    //
+    // only modify rows where username matches parameter provided
+    
+    public static final boolean RESET_PASSWORD_SQL =
+    		""
 }

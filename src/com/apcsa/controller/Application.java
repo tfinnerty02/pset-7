@@ -1,6 +1,8 @@
 package com.apcsa.controller;
 
 import java.util.Scanner;
+
+
 import com.apcsa.data.PowerSchool;
 import com.apcsa.model.User;
 
@@ -220,6 +222,12 @@ public class Application {
        //      call database method to reset password for username
        //      print success message
        //
+	   
+	   System.out.print("\nEnter username of account to be reset: ");
+	   String userRestName = in.next();
+	   
+	   
+	   
    }
     
     /*
