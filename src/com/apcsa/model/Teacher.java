@@ -1,6 +1,7 @@
 package com.apcsa.model;
 
 import java.sql.ResultSet;
+
 import com.apcsa.model.User;
 import java.sql.SQLException;
 
