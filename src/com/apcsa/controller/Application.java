@@ -10,6 +10,8 @@ public class Application {
 
     private Scanner in;
     private User activeUser;
+    
+    String userResetName = "";
 
     enum RootAction { PASSWORD, DATABASE, LOGOUT, SHUTDOWN }
     
@@ -213,19 +215,13 @@ public class Application {
     */
 
    private void resetPassword() {
-       //
-       // prompt root user to enter username of user whose password needs to be reset
-       //
-       // ask root user to confirm intent to reset the password for that username
-       //
-       // if confirmed...
-       //      call database method to reset password for username
-       //      print success message
-       //
 	   
 	   System.out.print("\nEnter username of account to be reset: ");
-	   String userRestName = in.next();
+	   userResetName = in.next();
 	   
+	   System.out.print("\nAre you sure you want to reset the password for " + userResetName + "? (y/n)");
+	   
+	   PowerSchool.updatePassword(userResetName, Utils.getHash(userResetName));
 	   
 	   
    }
@@ -242,6 +238,9 @@ public class Application {
         //      call database initialize method with parameter of true
         //      print success message
         //
+    	
+    	PowerSchool.initialize(true);
+    	
     }
     
     /*
@@ -255,6 +254,9 @@ public class Application {
         // if confirmed...
         //      set activeUser to null
         //
+    	
+    	activeUser = null;
+    	
     }
     
     

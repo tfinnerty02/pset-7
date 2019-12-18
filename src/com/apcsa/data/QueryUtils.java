@@ -69,6 +69,6 @@ public class QueryUtils {
     //
     // only modify rows where username matches parameter provided
     
-    public static final boolean RESET_PASSWORD_SQL =
-    		""
+    public static final String UPDATE_PASSWORD_SQL = "UPDATE users SET auth = ? WHERE username = ?"; 
+    
 }
