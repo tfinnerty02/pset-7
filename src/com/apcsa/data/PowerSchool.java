@@ -212,6 +212,38 @@ public class PowerSchool {
             return -1;
         }
     }
+    
+    /*
+     * Updates the last login time for the user.
+     *
+     * @param conn the current database connection
+     * @param username the user's username
+     * @param ts the current timestamp in string form
+     * @return the number of affected rows
+     */
+    
+    private static int updateLastLogin(Connection conn, String username, String ts) {
+        try (PreparedStatement stmt = conn.prepareStatement(QueryUtils.UPDATE_LAST_LOGIN_SQL)) {
+
+            conn.setAutoCommit(false);
+            stmt.setString(1, ts);
+            stmt.setString(2, username);
+
+            if (stmt.executeUpdate() == 1) {
+                conn.commit();
+
+                return 1;
+            } else {
+                conn.rollback();
+
+                return -1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+            return -1;
+        }
+    }
 
     /*
      * Builds the database. Executes a SQL script from a configuration file to
@@ -270,21 +302,21 @@ public class PowerSchool {
         //
     	
     	try ( Connection conn = getConnection();
-        		PreparedStatement stmt = conn.prepareStatement(QueryUtils.UPDATE_PASSWORD_SQL)) {
+        		PreparedStatement stmt = conn.prepareStatement(QueryUtils.UPDATE_PASSWORD_AND_TIME_SQL)) {
 
             conn.setAutoCommit(false);
             stmt.setString(1, Utils.getHash(username));
-            stmt.setString(2, username);
+            stmt.setString(2, "0000-00-00 00:00:00.000");
+            stmt.setString(3, username);
 
             if (stmt.executeUpdate() == 1) {
                 conn.commit();
 
-             
             } else {
                 conn.rollback();
 
-               
             }
+            
         } catch (SQLException e) {
             e.printStackTrace();
 

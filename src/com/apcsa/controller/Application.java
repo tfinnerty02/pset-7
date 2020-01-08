@@ -64,6 +64,9 @@ public class Application {
                 //
                 // remember, the interface will be difference depending on the type
                 // of user that is logged in (root, administrator, teacher, student)
+                
+                createAndShowUI();
+                
             } else {
                 System.out.println("\nInvalid username and/or password.");
             }
@@ -269,9 +272,12 @@ public class Application {
     	System.out.print("\nEnter username of account to be reset: ");
  	   userResetName = in.next();
  	   
- 	   System.out.print("\nAre you sure you want to reset the password for " + userResetName + "? (y/n)");
- 	   
- 	   PowerSchool.updatePassword(userResetName, Utils.getHash(userResetName));
+ 	   if(Utils.confirm(in, "\nAre you sure you want to reset the password for " + userResetName + "? (y/n)")){
+ 		  PowerSchool.resetPassword(userResetName);
+ 		  System.out.println("Successfully reset password for " + userResetName + ".");
+ 	   }else if(!Utils.confirm(in, "\nAre you sure you want to reset the password for " + userResetName + "? (y/n)")) {
+ 		   System.out.println("Password reset for account " + userResetName + " cancelled.");
+ 	   }
  	   
     }
     
@@ -434,6 +440,14 @@ public class Application {
         //      call database initialize method with parameter of true
         //      print success message
         //
+    	
+    	if(Utils.confirm(in, "Are you sure you want to reset all settings and data? (y/n) ")) {
+    		PowerSchool.initialize(true);
+    		System.out.println("Successfully reset database.");
+    	}else {
+    		System.out.println("Factory reset cancelled.");
+    	}
+    	
     }
     
     /*
@@ -447,6 +461,13 @@ public class Application {
         // if confirmed...
         //      set activeUser to null
         //
+    	
+    	if(Utils.confirm(in, "Are you sure you want to logout? (y/n) ")){
+    		activeUser = null;
+    	}else {
+    		System.out.println("Logout cancelled.");
+    	}
+    	
     }
 
     /////// MAIN METHOD ///////////////////////////////////////////////////////////////////

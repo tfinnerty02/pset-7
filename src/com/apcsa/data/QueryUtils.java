@@ -72,6 +72,9 @@ public class QueryUtils {
     public static final String UPDATE_PASSWORD_SQL = 
     		"UPDATE users SET auth = ? WHERE username = ?"; 
     
+    public static final String UPDATE_PASSWORD_AND_TIME_SQL = 
+    		"UPDATE users SET auth = ?, last_login = ? WHERE username = ?"; 
+    
     /*
      * Retrieves all teachers.
      */
