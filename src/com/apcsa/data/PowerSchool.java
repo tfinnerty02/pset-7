@@ -1,8 +1,6 @@
 package com.apcsa.data;
 
 import java.io.BufferedReader;
-
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -74,12 +72,12 @@ public class PowerSchool {
     public static User login(String username, String password) {
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(QueryUtils.LOGIN_SQL)) {
+
             stmt.setString(1, username);
             stmt.setString(2, Utils.getHash(password));
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                	// it's not doing this
                     Timestamp ts = new Timestamp(new Date().getTime());
                     int affected = PowerSchool.updateLastLogin(conn, username, ts);
 
@@ -253,6 +251,48 @@ public class PowerSchool {
         }
     }
     
+    /**
+     * Resets a user's password.
+     * 
+     * @param username the user's username
+     */
+
+    public static void resetPassword(String username) {
+        //
+        // get a connection to the database
+        // create a prepared statement (both of thses should go in a try-with-resources statement)
+        //
+        // insert parameters into the prepared statement
+        //      - the user's hashed username
+        //      - the user's plaintext username
+        //
+        // execute the update statement
+        //
+    	
+    	try ( Connection conn = getConnection();
+        		PreparedStatement stmt = conn.prepareStatement(QueryUtils.UPDATE_PASSWORD_SQL)) {
+
+            conn.setAutoCommit(false);
+            stmt.setString(1, Utils.getHash(username));
+            stmt.setString(2, username);
+
+            if (stmt.executeUpdate() == 1) {
+                conn.commit();
+
+             
+            } else {
+                conn.rollback();
+
+               
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+            
+        }
+    	
+    }
+    
     public static int updatePassword(String username, String password) {
     	
         try ( Connection conn = getConnection();
@@ -301,34 +341,4 @@ public class PowerSchool {
         
         return teachers;
     }
-    
-    /**
-     * Retrieves all faculty members in a department
-     * 
-     * @return list of teachers from department
-     */
-     
-     public static ArrayList<Teacher> getTeachersByDepartment(int department_id) {
-         ArrayList<Teacher> teachers = new ArrayList<Teacher>();
-         
-         
-         try (Connection conn = getConnection();
-              Statement stmt = conn.prepareStatement(QueryUtils.GET_TEACHERS_BY_DEPARTMENT_SQL)) {
-             
-        	 conn.setAutoCommit(false);
-             stmt.setString(1, department_id);
-        	 
-             try (ResultSet rs = stmt.executeQuery(stmt)) {
-                 while (rs.next()) {
-                     teachers.add(new Teacher(rs));
-                 }
-             }
-         } catch (SQLException e) {
-             e.printStackTrace();
-         }
-         
-         return teachers;
-     }
-
-
 }

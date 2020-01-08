@@ -1,25 +1,21 @@
 package com.apcsa.controller;
 
 import java.util.Scanner;
-
 import java.util.ArrayList;
-
 import com.apcsa.data.PowerSchool;
 import com.apcsa.model.Teacher;
 import com.apcsa.model.User;
 
 public class Application {
+	
+	String userResetName;
 
     private Scanner in;
     private User activeUser;
-    private PowerSchool PowerSchool;
     
-    String userResetName = "";
-    int department_id = 0;
-
     enum RootAction { PASSWORD, DATABASE, LOGOUT, SHUTDOWN }
     enum AdministratorAction { FACULTY, DEPARTMENT, STUDENTS, GRADE, COURSE, PASSWORD, LOGOUT }
-    
+
     /**
      * Creates an instance of the Application class, which is responsible for interacting
      * with the user via the command line interface.
@@ -53,41 +49,27 @@ public class Application {
 
             // if login is successful, update generic user to administrator, teacher, or student
 
-            try {
-                if (login(username, password)) {
-                    activeUser = activeUser.isAdministrator()
-                        ? PowerSchool.getAdministrator(activeUser) : activeUser.isTeacher()
-                        ? PowerSchool.getTeacher(activeUser) : activeUser.isStudent()
-                        ? PowerSchool.getStudent(activeUser) : activeUser.isRoot()
-                        ? activeUser : null;
-                        
-                    if (isFirstLogin() && !activeUser.isRoot()) {
-                        // first-time users need to change their passwords from the default provided
-                    	
-                    }
-                    
-                    createAndShowUI();
-                } else {
-                    System.out.println("\nInvalid username and/or password.");
-                }
-            } catch (Exception e) {
-                shutdown(e);
-            }
-            
-            /**
-             * Displays an user type-specific menu with which the user
-             * navigates and interacts with the application.
-             */
-            
+            if (login(username, password)) {
+                activeUser = activeUser.isAdministrator()
+                    ? PowerSchool.getAdministrator(activeUser) : activeUser.isTeacher()
+                    ? PowerSchool.getTeacher(activeUser) : activeUser.isStudent()
+                    ? PowerSchool.getStudent(activeUser) : activeUser.isRoot()
+                    ? activeUser : null;
 
+                if (isFirstLogin() && !activeUser.isRoot()) {
+                    // first-time users need to change their passwords from the default provided
+                }
+
+                // create and show the user interface
+                //
+                // remember, the interface will be difference depending on the type
+                // of user that is logged in (root, administrator, teacher, student)
+            } else {
+                System.out.println("\nInvalid username and/or password.");
+            }
         }
     }
     
-    /**
-     * Displays an user type-specific menu with which the user
-     * navigates and interacts with the application.
-     */
-
     public void createAndShowUI() {
         System.out.println("\nHello, again, " + activeUser.getFirstName() + "!");
         
@@ -100,6 +82,10 @@ public class Application {
         }
     }
     
+    /*
+     * Displays an interface for root users.
+     */
+
     private void showRootUI() {
         while (activeUser != null) {
             switch (getRootMenuSelection()) {
@@ -112,19 +98,23 @@ public class Application {
         }
     }
     
+    /*
+     * Displays an interface for administrators users.
+     */
+        
     private void showAdministratorUI() {
-        while (activeUser != null) {
-            switch (getAdministratorMenuSelection()) {
-                case FACULTY: viewFaculty(); break;
-                case DEPARTMENT: viewFacultyByDepartment(); break;
-                case STUDENTS: viewStudents(); break;
-                case GRADE: viewStudentsByGrade(); break;
-                case COURSE: viewStudentsByCourse(); break;
-                case PASSWORD: changePassword(false); break;
-                case LOGOUT: logout(); break;
-                default: System.out.println("\nInvalid selection."); break;
-            }
-        }
+//        while (activeUser != null) {
+//            switch (getAdministratorMenuSelection()) {
+//                case FACULTY: viewFaculty(); break;
+//                case DEPARTMENT: viewFacultyByDepartment(); break;
+//                case STUDENTS: viewStudents(); break;
+//                case GRADE: viewStudentsByGrade(); break;
+//                case COURSE: viewStudentsByCourse(); break;
+//                case PASSWORD: changePassword(false); break;
+//                case LOGOUT: logout(); break;
+//                default: System.out.println("\nInvalid selection."); break;
+//            }
+//        }
     }
     
     /*
@@ -152,7 +142,7 @@ public class Application {
      }
     
     /*
-     * Retrieves a root user's menu selection.
+     * Retrieves a admin user's menu selection.
      * 
      * @return the menu selection
      */
@@ -181,7 +171,7 @@ public class Application {
         
         return null;
     }
-
+    
     /*
      * Retrieves the user's department selection.
      * 
@@ -207,6 +197,55 @@ public class Application {
         return selection;
     }
     
+    /*
+     * Retrieves a user's grade selection.
+     * 
+     * @return the selected grade
+     */
+
+    private int getGradeSelection() {
+        int selection = -1;
+        System.out.println("\nChoose a grade level.");
+        
+        while (selection < 1 || selection > 4) {
+            System.out.println("\n[1] Freshman.");
+            System.out.println("[2] Sophomore.");
+            System.out.println("[3] Junior.");
+            System.out.println("[4] Senior.");
+            System.out.print("\n::: ");
+            
+            selection = Utils.getInt(in, -1);
+        }
+        
+        return selection + 8;   // +8 because you want a value between 9 and 12
+    }
+    
+    /*
+     * Retrieves a user's course selection.
+     * 
+     * @return the selected course
+     */
+
+//    private String getCourseSelection() throws SQLException {
+//        boolean valid = false;
+//        String courseNo = null;
+//        
+//        while (!valid) {
+//            System.out.print("\nCourse No.: ");
+//            courseNo = in.next();
+//            
+//            if (/* is a valid course number */) {
+//                valid = true;
+//            } else {
+//                System.out.println("\nCourse not found.");
+//            }
+//        }
+//        
+//        return courseNo;
+//    }
+    
+    
+
     /**
      * Logs in with the provided credentials.
      *
@@ -220,15 +259,20 @@ public class Application {
 
         return activeUser != null;
     }
-
-    /**
-     * Determines whether or not the user has logged in before.
-     *
-     * @return true if the user has never logged in; false otherwise
+    
+    /*
+     * Allows a root user to reset another user's password.
      */
 
-    public boolean isFirstLogin() {
-        return activeUser.getLastLogin().equals("0000-00-00 00:00:00.000");
+    private void resetPassword() {
+        
+    	System.out.print("\nEnter username of account to be reset: ");
+ 	   userResetName = in.next();
+ 	   
+ 	   System.out.print("\nAre you sure you want to reset the password for " + userResetName + "? (y/n)");
+ 	   
+ 	   PowerSchool.updatePassword(userResetName, Utils.getHash(userResetName));
+ 	   
     }
     
     /*
@@ -264,25 +308,6 @@ public class Application {
         // otherwise...
         //      print the list of teachers by name an department (just like last time)
         //
-    	
-    	System.out.println("Enter department id: ");
-    	department_id = in.nextInt();
-    	
-    	ArrayList<Teacher> teachers = PowerSchool.getTeachersByDepartment(department_id);
-        
-        if (teachers.isEmpty()) {
-            System.out.println("\nNo teachers to display.");
-        } else {
-            System.out.println();
-            
-            int i = 1;
-            for (Teacher teacher : teachers) {
-                System.out.println(i++ + ". " + teacher.getName() + " / " + teacher.getDepartmentName());
-            } 
-        }
-    	
-    	
-    	
     }
     
     /*
@@ -332,6 +357,18 @@ public class Application {
         //
     }
     
+    
+
+    /**
+     * Determines whether or not the user has logged in before.
+     *
+     * @return true if the user has never logged in; false otherwise
+     */
+
+    public boolean isFirstLogin() {
+        return activeUser.getLastLogin().equals("0000-00-00 00:00:00.000");
+    }
+    
     /*
      * Allows a user to change his or her password.
      * 
@@ -349,54 +386,6 @@ public class Application {
         //      the old password will either be something the use entered (if it isn't his or her first login) or
         //      it'll be the same as their username
     }
-    
-    /*
-     * Retrieves a user's grade selection.
-     * 
-     * @return the selected grade
-     */
-
-    private int getGradeSelection() {
-        int selection = -1;
-        System.out.println("\nChoose a grade level.");
-        
-        while (selection < 1 || selection > 4) {
-            System.out.println("\n[1] Freshman.");
-            System.out.println("[2] Sophomore.");
-            System.out.println("[3] Junior.");
-            System.out.println("[4] Senior.");
-            System.out.print("\n::: ");
-            
-            selection = Utils.getInt(in, -1);
-        }
-        
-        return selection + 8;   // +8 because you want a value between 9 and 12
-    }
-    
-    /*
-     * Retrieves a user's course selection.
-     * 
-     * @return the selected course
-     */
-
-//    private String getCourseSelection() throws SQLException {
-//        boolean valid = false;
-//        String courseNo = null;
-//        
-//        while (!valid) {
-//            System.out.print("\nCourse No.: ");
-//            courseNo = in.next();
-//            
-//            if (/* is a valid course number */) {
-//                valid = true;
-//            } else {
-//                System.out.println("\nCourse not found.");
-//            }
-//        }
-//        
-//        return courseNo;
-//    }
-//    
     
     /*
      * Shuts down the application after encountering an error.
@@ -433,21 +422,6 @@ public class Application {
         }
     }
     
-    /* Allows a root user to reset another user's password.
-    */
-
-   private void resetPassword() {
-	   
-	   System.out.print("\nEnter username of account to be reset: ");
-	   userResetName = in.next();
-	   
-	   System.out.print("\nAre you sure you want to reset the password for " + userResetName + "? (y/n)");
-	   
-	   PowerSchool.updatePassword(userResetName, Utils.getHash(userResetName));
-	   
-	   
-   }
-    
     /*
      * Resets the database to its factory settings.
      */
@@ -460,9 +434,6 @@ public class Application {
         //      call database initialize method with parameter of true
         //      print success message
         //
-    	
-    	PowerSchool.initialize(true);
-    	
     }
     
     /*
@@ -476,12 +447,7 @@ public class Application {
         // if confirmed...
         //      set activeUser to null
         //
-    	
-    	activeUser = null;
-    	
     }
-    
-    
 
     /////// MAIN METHOD ///////////////////////////////////////////////////////////////////
 
