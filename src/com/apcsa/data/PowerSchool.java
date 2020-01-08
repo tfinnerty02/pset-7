@@ -308,12 +308,12 @@ public class PowerSchool {
      * @return list of teachers from department
      */
      
-     public static ArrayList<Teacher> getTeachersByDepartment(department_id) {
+     public static ArrayList<Teacher> getTeachersByDepartment(int department_id) {
          ArrayList<Teacher> teachers = new ArrayList<Teacher>();
          
          
          try (Connection conn = getConnection();
-              Statement stmt = conn.prepareStatement(QueryUtils.GET_TEACHERS_BY_ID_SQL)) {
+              Statement stmt = conn.prepareStatement(QueryUtils.GET_TEACHERS_BY_DEPARTMENT_SQL)) {
              
         	 conn.setAutoCommit(false);
              stmt.setString(1, department_id);

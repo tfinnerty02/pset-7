@@ -5,12 +5,14 @@ import java.util.Scanner;
 import java.util.ArrayList;
 
 import com.apcsa.data.PowerSchool;
-import com.apcsa.model.*;
+import com.apcsa.model.Teacher;
+import com.apcsa.model.User;
 
 public class Application {
 
     private Scanner in;
     private User activeUser;
+    private PowerSchool PowerSchool;
     
     String userResetName = "";
     int department_id = 0;
