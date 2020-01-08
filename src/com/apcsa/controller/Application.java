@@ -1,11 +1,11 @@
 package com.apcsa.controller;
 
 import java.util.Scanner;
+
 import java.util.ArrayList;
 
-
 import com.apcsa.data.PowerSchool;
-import com.apcsa.model.User;
+import com.apcsa.model.*;
 
 public class Application {
 
@@ -13,6 +13,7 @@ public class Application {
     private User activeUser;
     
     String userResetName = "";
+    int department_id = 0;
 
     enum RootAction { PASSWORD, DATABASE, LOGOUT, SHUTDOWN }
     enum AdministratorAction { FACULTY, DEPARTMENT, STUDENTS, GRADE, COURSE, PASSWORD, LOGOUT }
@@ -60,6 +61,7 @@ public class Application {
                         
                     if (isFirstLogin() && !activeUser.isRoot()) {
                         // first-time users need to change their passwords from the default provided
+                    	
                     }
                     
                     createAndShowUI();
@@ -260,6 +262,25 @@ public class Application {
         // otherwise...
         //      print the list of teachers by name an department (just like last time)
         //
+    	
+    	System.out.println("Enter department id: ");
+    	department_id = in.nextInt();
+    	
+    	ArrayList<Teacher> teachers = PowerSchool.getTeachersByDepartment(department_id);
+        
+        if (teachers.isEmpty()) {
+            System.out.println("\nNo teachers to display.");
+        } else {
+            System.out.println();
+            
+            int i = 1;
+            for (Teacher teacher : teachers) {
+                System.out.println(i++ + ". " + teacher.getName() + " / " + teacher.getDepartmentName());
+            } 
+        }
+    	
+    	
+    	
     }
     
     /*
@@ -356,24 +377,24 @@ public class Application {
      * @return the selected course
      */
 
-    private String getCourseSelection() throws SQLException {
-        boolean valid = false;
-        String courseNo = null;
-        
-        while (!valid) {
-            System.out.print("\nCourse No.: ");
-            courseNo = in.next();
-            
-            if (/* is a valid course number */) {
-                valid = true;
-            } else {
-                System.out.println("\nCourse not found.");
-            }
-        }
-        
-        return courseNo;
-    }
-    
+//    private String getCourseSelection() throws SQLException {
+//        boolean valid = false;
+//        String courseNo = null;
+//        
+//        while (!valid) {
+//            System.out.print("\nCourse No.: ");
+//            courseNo = in.next();
+//            
+//            if (/* is a valid course number */) {
+//                valid = true;
+//            } else {
+//                System.out.println("\nCourse not found.");
+//            }
+//        }
+//        
+//        return courseNo;
+//    }
+//    
     
     /*
      * Shuts down the application after encountering an error.

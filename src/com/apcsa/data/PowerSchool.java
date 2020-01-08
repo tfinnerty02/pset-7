@@ -2,6 +2,7 @@ package com.apcsa.data;
 
 import java.io.BufferedReader;
 
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -14,6 +15,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.ArrayList;
 import com.apcsa.controller.Utils;
 import com.apcsa.model.Administrator;
 import com.apcsa.model.Student;
@@ -299,6 +301,34 @@ public class PowerSchool {
         
         return teachers;
     }
+    
+    /**
+     * Retrieves all faculty members in a department
+     * 
+     * @return list of teachers from department
+     */
+     
+     public static ArrayList<Teacher> getTeachersByDepartment(department_id) {
+         ArrayList<Teacher> teachers = new ArrayList<Teacher>();
+         
+         
+         try (Connection conn = getConnection();
+              Statement stmt = conn.prepareStatement(QueryUtils.GET_TEACHERS_BY_ID_SQL)) {
+             
+        	 conn.setAutoCommit(false);
+             stmt.setString(1, department_id);
+        	 
+             try (ResultSet rs = stmt.executeQuery(stmt)) {
+                 while (rs.next()) {
+                     teachers.add(new Teacher(rs));
+                 }
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return teachers;
+     }
 
 
 }

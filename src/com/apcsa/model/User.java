@@ -1,6 +1,7 @@
 package com.apcsa.model;
 
 import java.sql.ResultSet;
+
 import java.sql.SQLException;
 
 public class User {
@@ -12,7 +13,6 @@ public class User {
     private String lastLogin;
 
 
-    
     /**
      * Creates an instance of the User class.
      *
