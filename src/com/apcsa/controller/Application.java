@@ -128,7 +128,7 @@ public class Application {
         while (activeUser != null) {
             switch (getTeacherMenuSelection()) {
                 case STUDENTS_COURSE: viewStudentsByCourseTeacher(); break;
-//                case ADD_ASS: addAssignment(); break;
+                case ADD_ASS: addAssignment(); break;
 //                case DEL_ASS: delAssignment(); break;
 //                case GRADE_ASS: enterAssignmentGrade(); break;
                 case PASSWORD: changePassword(false); break;
@@ -287,6 +287,25 @@ public class Application {
         }
         
         return courseNo;
+    }
+    
+    private int getMarkingPeriodSelection() {
+        int selection = -1;
+        System.out.println("\nChoose a marking period or exam status.");
+        
+        while (selection < 1 || selection > 6) {
+            System.out.println("\n[1] MP1 assignment.");
+            System.out.println("[2] MP2 assignment.");
+            System.out.println("[3] MP3 assignment.");
+            System.out.println("[4] MP4 assignment.");
+            System.out.println("[5] Midterm exam.");
+            System.out.println("[6] Final exam.");
+            System.out.print("\n::: ");
+            
+            selection = Utils.getInt(in, -1);
+        }
+        
+        return selection;
     }
     
     
@@ -536,6 +555,45 @@ public class Application {
     	String courseName = getCourseByTeacherSelection(PowerSchool.getTeacherId(activeUser.getUserId()));
     	
     	viewStudentsByCourse(courseName);
+    	
+    }
+    
+    private void addAssignment() {
+    	String courseName = getCourseByTeacherSelection(PowerSchool.getTeacherId(activeUser.getUserId()));
+    	int inputIsFinal = -1;
+    	int inputIsMidterm = -1;
+    	int inputMarkingPeriod = -1;
+    	
+    	int inputMPSelection = getMarkingPeriodSelection();
+    	
+    	if(inputMPSelection == 5) {
+    		inputIsMidterm = 1;
+    	}else if(inputMPSelection == 6) {
+    		inputIsFinal = 1;
+    	}else if(inputMPSelection != 5 && inputMPSelection != 6) {
+    		inputMarkingPeriod = inputMPSelection;
+    	}
+    	
+    	System.out.println("Assignment Title: ");
+    	String inputTitle = in.nextLine();
+    	
+    	double inputPointValue = -1;
+    	boolean validInput = false;
+    	
+    	while(!(validInput)) {
+    	
+	    	System.out.println("Point Value: ");
+	    	inputPointValue = in.nextDouble();
+	    	
+	    	if(inputPointValue > 1 && inputPointValue < 100) {
+	    		validInput = true;
+	    	}else if(!(inputPointValue > 1 && inputPointValue < 100)) {
+	    		System.out.println("Point values must be between 1 and 100.");
+	    	}
+    	}
+    	
+    	PowerSchool.addAssignment(PowerSchool.getCourseIdFromNo(courseName), PowerSchool.getAssignmentNo(PowerSchool.getCourseIdFromNo(courseName))+1, inputMarkingPeriod, inputIsMidterm, inputIsFinal, inputTitle, inputPointValue);
+    	
     	
     }
     

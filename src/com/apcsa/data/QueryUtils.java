@@ -115,8 +115,8 @@ public class QueryUtils {
     public static final String GET_COURSES_BY_TEACHER_SQL =
     		"SELECT * FROM courses WHERE teacher_id = ?";
     
-    public static final String DELETE_ASSIGNEMNT_SQL =
-    		"DELETE FROM assignements WHERE assignment_id = ?";
+    public static final String DELETE_ASSIGNMENT_SQL =
+    		"DELETE FROM assignements WHERE assignment_id = ? AND course_id = ?";
     
     public static final String UPDATE_GRADE_SQL =
     		"UPDATE assignment_grades SET points_earned = ? WHERE student_id = ? AND assignement_id = ?";
@@ -126,5 +126,8 @@ public class QueryUtils {
     
     public static final String GET_TEACHER_ID_FROM_USER_ID_SQL =
     		"SELECT * FROM teachers WHERE user_id = ?";
+    
+    public static final String GET_ASSIGNMENTS_SQL =
+    		"SELECT * FROM assignments WHERE course_id = ?";
 
 }

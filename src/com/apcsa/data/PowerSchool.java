@@ -524,7 +524,7 @@ public class PowerSchool {
          return courses;
      }
      
-     public static boolean addAssignment(int course_id, int assignment_id, int marking_period, int is_midterm, int is_final, String title, int point_value) {
+     public static boolean addAssignment(int course_id, int assignment_id, int marking_period, int is_midterm, int is_final, String title, double point_value) {
     	 try ( Connection conn = getConnection();
          		PreparedStatement stmt = conn.prepareStatement(QueryUtils.ADD_ASSIGNMENT_SQL)) {
 
@@ -535,7 +535,7 @@ public class PowerSchool {
              stmt.setString(4, Integer.toString(is_midterm));
              stmt.setString(5, Integer.toString(is_final));
              stmt.setString(6, title);
-             stmt.setString(7, Integer.toString(point_value));
+             stmt.setString(7, Double.toString(point_value));
 
              if (stmt.executeUpdate() == 1) {
                  conn.commit();
@@ -571,6 +571,53 @@ public class PowerSchool {
          }
          
          return -1;
+     }
+     
+     public static int getAssignmentNo(int course_id) {
+         
+         try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_ASSIGNMENTS_SQL)){
+    		
+        	 ArrayList<String> assignments = new ArrayList<String>();
+        	 
+        	 stmt.setString(1, Integer.toString(course_id));
+                         
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                      assignments.add(rs.getString("assignment_id"));
+                 }
+             }
+             
+             return assignments.size();
+             
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return -1;
+     }
+     
+     public boolean delAssignment(int assignment_id, int course_id) {
+    	 try ( Connection conn = getConnection();
+          		PreparedStatement stmt = conn.prepareStatement(QueryUtils.DELETE_ASSIGNMENT_SQL)) {
+
+              conn.setAutoCommit(false);
+              stmt.setString(1, Integer.toString(assignment_id));
+              stmt.setString(2, Integer.toString(course_id));
+
+              if (stmt.executeUpdate() == 1) {
+                  conn.commit();
+
+                  return true;
+              } else {
+                  conn.rollback();
+
+                  return false;
+              }
+          } catch (SQLException e) {
+              e.printStackTrace();
+
+              return false;
+          }
      }
      
      
