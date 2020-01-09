@@ -16,6 +16,8 @@ public class Application {
     
     enum RootAction { PASSWORD, DATABASE, LOGOUT, SHUTDOWN }
     enum AdministratorAction { FACULTY, DEPARTMENT, STUDENTS, GRADE, COURSE, PASSWORD, LOGOUT }
+    enum TeacherAction { STUDENTS_COURSE, ADD_ASS, DEL_ASS, GRADE_ASS, PASSWORD, LOGOUT }
+    enum StudentAction { COURSE_GRADE, COURSE_ASS, PASSWORD, LOGOUT }
 
     /**
      * Creates an instance of the Application class, which is responsible for interacting
@@ -59,6 +61,7 @@ public class Application {
 
                 if (isFirstLogin() && !activeUser.isRoot()) {
                     // first-time users need to change their passwords from the default provided
+                	changePassword(true);
                 }
 
                 // create and show the user interface
@@ -81,8 +84,8 @@ public class Application {
             showRootUI();
         } else if (activeUser.isAdministrator()) {
             showAdministratorUI();
-        } else {
-            // TODO - add cases for teacher, student, and unknown
+        } else if(activeUser.isTeacher()){
+            showTeacherUI();
         }
     }
     
@@ -114,6 +117,20 @@ public class Application {
                 case STUDENTS: viewStudents(); break;
                 case GRADE: viewStudentsByGrade(); break;
                 case COURSE: viewStudentsByCourse(); break;
+                case PASSWORD: changePassword(false); break;
+                case LOGOUT: logout(); break;
+                default: System.out.println("\nInvalid selection."); break;
+            }
+        }
+    }
+    
+    private void showTeacherUI() {
+        while (activeUser != null) {
+            switch (getTeacherMenuSelection()) {
+                case STUDENTS_COURSE: viewStudentsByCourseTeacher(); break;
+//                case ADD_ASS: addAssignment(); break;
+//                case DEL_ASS: delAssignment(); break;
+//                case GRADE_ASS: enterAssignmentGrade(); break;
                 case PASSWORD: changePassword(false); break;
                 case LOGOUT: logout(); break;
                 default: System.out.println("\nInvalid selection."); break;
@@ -176,6 +193,29 @@ public class Application {
         return null;
     }
     
+    private TeacherAction getTeacherMenuSelection() {
+        System.out.println();
+        
+        System.out.println("[1] View student enrollment by course");
+        System.out.println("[2] Add assignment.");
+        System.out.println("[3] Delete Assignment.");
+        System.out.println("[4] Enter grade.");
+        System.out.println("[5] Change password.");
+        System.out.println("[6] Logout.");
+        System.out.print("\n::: ");
+
+        switch (Utils.getInt(in, -1)) {
+            case 1: return TeacherAction.STUDENTS_COURSE;
+            case 2: return TeacherAction.ADD_ASS;
+            case 3: return TeacherAction.DEL_ASS;
+            case 4: return TeacherAction.GRADE_ASS;
+            case 5: return TeacherAction.PASSWORD;
+            case 6: return TeacherAction.LOGOUT;
+        }
+        
+        return null;
+    }
+    
     /*
      * Retrieves the user's department selection.
      * 
@@ -200,6 +240,7 @@ public class Application {
         
         return selection;
     }
+    
     
     /*
      * Retrieves a user's grade selection.
@@ -426,6 +467,76 @@ public class Application {
                 
             } 
         }
+    }
+    
+    private void viewStudentsByCourse(String courseNo){
+        //
+        // get a list of students by course
+        //      to do this, you'll need to prompt the user to choose a course (more on this later)
+        //
+        // if the list of students is empty...
+        //      print a message saying exactly that
+        // otherwise...
+        //      print the list of students by name and grade point average
+        //
+    	
+    	int inputCourseNo = PowerSchool.getCourseIdFromNo(courseNo);
+
+    	ArrayList<Student> students = PowerSchool.getStudentsByCourse(inputCourseNo);
+        
+        if (students.isEmpty()) {
+            System.out.println("\nNo students to display.");
+        } else {
+            System.out.println();
+            
+            int i = 1;
+            for (Student student : students) {
+            	if(student.getGpa() == -1) {
+            		System.out.println(i++ + ". " + student.getName() + " / --");
+            	}else if(student.getGpa() != -1) {
+            		System.out.println(i++ + ". " + student.getName() + " / " + student.getGpa());
+            	}
+                
+            } 
+        }
+    }
+    
+    private String getCourseByTeacherSelection(int teacher_id) {
+    	
+    	ArrayList<String> courseNames = PowerSchool.getCoursesByTeacher(teacher_id);
+    	
+    	if (courseNames.isEmpty()) {
+            System.out.println("\nNo courses to display.");
+        } else {
+            System.out.println();
+            int selection = -1;
+        	System.out.println("\nChoose a course.\n");
+        	while (selection < 1 || selection > 6) {
+       
+	            int i = 1;
+	            for (String course : courseNames) {
+	                System.out.println("[" + i++ + "] " + course);
+	            } 
+	            
+	            selection = Utils.getInt(in, -1);
+	            
+	            String selectedCourse = courseNames.get(selection-1);
+	            return selectedCourse;
+	            
+        	}
+        }
+    	
+    	return null;
+    	
+    
+    }
+    
+    private void viewStudentsByCourseTeacher() {
+    	
+    	String courseName = getCourseByTeacherSelection(PowerSchool.getTeacherId(activeUser.getUserId()));
+    	
+    	viewStudentsByCourse(courseName);
+    	
     }
     
     

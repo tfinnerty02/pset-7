@@ -129,7 +129,7 @@ public class PowerSchool {
 
     public static User getTeacher(User user) {
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_TEACHER_SQL)) {
+             PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_TEACHER_DEPARTMENT_SQL)) {
 
             stmt.setInt(1, user.getUserId());
 
@@ -551,6 +551,26 @@ public class PowerSchool {
 
              return false;
          }
+     }
+     
+     public static int getTeacherId(int user_id) {
+         
+         try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_TEACHER_ID_FROM_USER_ID_SQL)){
+    		 
+        	 stmt.setString(1, Integer.toString(user_id));
+        	 
+        	 int teacher_id = -1;
+                         
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                     return rs.getInt("teacher_id");
+                 }
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return -1;
      }
      
      

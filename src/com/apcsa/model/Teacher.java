@@ -39,7 +39,7 @@ public class Teacher extends User {
 	    this.departmentId = rs.getInt("department_id");
 	    this.firstName = rs.getString("first_name");
 	    this.lastName = rs.getString("last_name");
-//	    this.departmentName = rs.getString("title");
+	    this.departmentName = rs.getString("title");
 	}
 	
 	/**
@@ -58,6 +58,10 @@ public class Teacher extends User {
 
 	public String getName() {
 	    return lastName + ", " + firstName;
+	}
+	
+	public int getTeacher_id() {
+		return teacherId;
 	}
 	
 	

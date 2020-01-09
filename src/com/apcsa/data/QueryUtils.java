@@ -47,6 +47,9 @@ public class QueryUtils {
         "SELECT * FROM teachers " +
             "WHERE user_id = ?";
     
+    public static final String GET_TEACHER_DEPARTMENT_SQL =
+    		"SELECT * FROM teachers INNER JOIN departments WHERE teachers.department_id = departments.department_id AND user_id = ?";
+    
     /*
      * Retrieves a student associated with a user account.
      */
@@ -88,8 +91,8 @@ public class QueryUtils {
             "last_name, first_name";
     
     public static final String GET_TEACHERS_BY_DEPARTMENT_SQL =
-    		"SELECT first_name, last_name, teacher_id, department_id FROM teachers " +
-    				"WHERE department_id = ?";
+    		"SELECT * FROM teachers, department " +
+    				"WHERE teachers.department_id = ? = department.department_id";
     
     public static final String GET_DEPARTMENT_TITLE =
     		"SELECT title FROM departments WHERE department_id =?";
@@ -120,5 +123,8 @@ public class QueryUtils {
     
     public static final String GET_STUDENTS_BY_ASSIGNMENT =
     		"SELECT * FROM students INNER JOIN assignment_grades on students.student_id = assignment_grades.student_id WHERE assignment_id = ? ORDER BY student_id";
+    
+    public static final String GET_TEACHER_ID_FROM_USER_ID_SQL =
+    		"SELECT * FROM teachers WHERE user_id = ?";
 
 }
