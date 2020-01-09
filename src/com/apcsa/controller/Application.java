@@ -114,7 +114,7 @@ public class Application {
                 case STUDENTS: viewStudents(); break;
                 case GRADE: viewStudentsByGrade(); break;
                 case COURSE: viewStudentsByCourse(); break;
-//                case PASSWORD: changePassword(false); break;
+                case PASSWORD: changePassword(false); break;
                 case LOGOUT: logout(); break;
                 default: System.out.println("\nInvalid selection."); break;
             }
@@ -456,6 +456,24 @@ public class Application {
         //      this requires three pieces of information: the username, the old password, and the new password
         //      the old password will either be something the use entered (if it isn't his or her first login) or
         //      it'll be the same as their username
+    	
+    	if(isFirstLogin()) {
+    		System.out.println("Enter new password: ");
+    		String newPass = in.next();
+    		PowerSchool.updatePassword(activeUser.getUsername(), Utils.getHash(newPass));
+    	}else if(!isFirstLogin()) {
+    		System.out.println("Enter current password: ");
+    		String currentPass = in.next();
+    		System.out.println("Enter new password: ");
+    		String newPass = in.next();
+    		if(PowerSchool.login(activeUser.getUsername(), currentPass) != null) {
+    			PowerSchool.updatePassword(activeUser.getUsername(), Utils.getHash(newPass));
+    			System.out.println("Successfully changed password.");
+    		}else if(PowerSchool.login(activeUser.getUsername(), currentPass) == null) {
+    			System.out.println("Invalid current password.");
+    		}
+    	}
+    	
     }
     
     /*
