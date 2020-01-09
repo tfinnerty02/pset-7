@@ -504,4 +504,54 @@ public class PowerSchool {
          
          return -1;
      }
+     
+     public static ArrayList<String> getCoursesByTeacher(int teacher_id){
+    	 ArrayList<String> courses = new ArrayList<String>();
+         
+         try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_COURSES_BY_TEACHER_SQL)){
+    		 
+        	 stmt.setString(1, Integer.toString(teacher_id));
+                         
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                     courses.add(rs.getString("course_no"));
+                 }
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return courses;
+     }
+     
+     public static boolean addAssignment(int course_id, int assignment_id, int marking_period, int is_midterm, int is_final, String title, int point_value) {
+    	 try ( Connection conn = getConnection();
+         		PreparedStatement stmt = conn.prepareStatement(QueryUtils.ADD_ASSIGNMENT_SQL)) {
+
+             conn.setAutoCommit(false);
+             stmt.setString(1, Integer.toString(course_id));
+             stmt.setString(2, Integer.toString(assignment_id));
+             stmt.setString(3, Integer.toString(marking_period));
+             stmt.setString(4, Integer.toString(is_midterm));
+             stmt.setString(5, Integer.toString(is_final));
+             stmt.setString(6, title);
+             stmt.setString(7, Integer.toString(point_value));
+
+             if (stmt.executeUpdate() == 1) {
+                 conn.commit();
+
+                 return true;
+             } else {
+                 conn.rollback();
+
+                 return false;
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+
+             return false;
+         }
+     }
+     
+     
 }

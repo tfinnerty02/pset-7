@@ -106,4 +106,19 @@ public class QueryUtils {
     public static final String GET_STUDENTS_FROM_COURSE_ID =
     		"SELECT * FROM students INNER JOIN course_grades ON course_grades.student_id = students.student_id WHERE course_id = ? ORDER BY last_name";
     
+    public static final String ADD_ASSIGNMENT_SQL =
+    		"INSERT INTO ASSIGNMENTS VALUES(?, ?, ?, ?, ?, ?, ?)";
+    
+    public static final String GET_COURSES_BY_TEACHER_SQL =
+    		"SELECT * FROM courses WHERE teacher_id = ?";
+    
+    public static final String DELETE_ASSIGNEMNT_SQL =
+    		"DELETE FROM assignements WHERE assignment_id = ?";
+    
+    public static final String UPDATE_GRADE_SQL =
+    		"UPDATE assignment_grades SET points_earned = ? WHERE student_id = ? AND assignement_id = ?";
+    
+    public static final String GET_STUDENTS_BY_ASSIGNMENT =
+    		"SELECT * FROM students INNER JOIN assignment_grades on students.student_id = assignment_grades.student_id WHERE assignment_id = ? ORDER BY student_id";
+
 }
