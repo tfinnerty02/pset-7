@@ -373,4 +373,28 @@ public class PowerSchool {
         
         return teachers;
     }
+     
+     public static ArrayList<Teacher> getTeachersByDepartment(int department_id) {
+    	 ArrayList<Teacher> teachers = new ArrayList<Teacher>();
+         
+         try (Connection conn = getConnection();
+        	PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_TEACHERS_BY_DEPARTMENT_SQL)) {
+
+             conn.setAutoCommit(false);
+             stmt.setString(1, Integer.toString(department_id));
+        	 
+                         
+             try (ResultSet rs = stmt.executeQuery()) {
+
+                 while (rs.next()) {
+                	 teachers.add(new Teacher(rs));
+                 }
+             }
+             return teachers;
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return teachers;
+     }
 }

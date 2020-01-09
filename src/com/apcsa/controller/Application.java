@@ -106,18 +106,18 @@ public class Application {
      */
         
     private void showAdministratorUI() {
-//        while (activeUser != null) {
-//            switch (getAdministratorMenuSelection()) {
-//                case FACULTY: viewFaculty(); break;
-//                case DEPARTMENT: viewFacultyByDepartment(); break;
+        while (activeUser != null) {
+            switch (getAdministratorMenuSelection()) {
+                case FACULTY: viewFaculty(); break;
+                case DEPARTMENT: viewFacultyByDepartment(); break;
 //                case STUDENTS: viewStudents(); break;
 //                case GRADE: viewStudentsByGrade(); break;
 //                case COURSE: viewStudentsByCourse(); break;
 //                case PASSWORD: changePassword(false); break;
-//                case LOGOUT: logout(); break;
-//                default: System.out.println("\nInvalid selection."); break;
-//            }
-//        }
+                case LOGOUT: logout(); break;
+                default: System.out.println("\nInvalid selection."); break;
+            }
+        }
     }
     
     /*
@@ -237,7 +237,7 @@ public class Application {
 //            System.out.print("\nCourse No.: ");
 //            courseNo = in.next();
 //            
-//            if (/* is a valid course number */) {
+//            if () {
 //                valid = true;
 //            } else {
 //                System.out.println("\nCourse not found.");
@@ -314,6 +314,23 @@ public class Application {
         // otherwise...
         //      print the list of teachers by name an department (just like last time)
         //
+    	
+    	System.out.println("Department ID: ");
+    	int inputDeptId = in.nextInt();
+    	
+    	ArrayList<Teacher> teachers = PowerSchool.getTeachersByDepartment(inputDeptId);
+        
+        if (teachers.isEmpty()) {
+            System.out.println("\nNo teachers to display.");
+        } else {
+            System.out.println();
+            
+            int i = 1;
+            for (Teacher teacher : teachers) {
+                System.out.println(i++ + ". " + teacher.getName() + " / " + teacher.getDepartmentName());
+            } 
+        }
+    	
     }
     
     /*

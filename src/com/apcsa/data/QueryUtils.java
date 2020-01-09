@@ -88,8 +88,8 @@ public class QueryUtils {
             "last_name, first_name";
     
     public static final String GET_TEACHERS_BY_DEPARTMENT_SQL =
-    		"SELECT first_name, last_name FROM teachers " +
-    				"WHERE grade_level = ?";
+    		"SELECT first_name, last_name, teacher_id, department_id FROM teachers " +
+    				"WHERE department_id = ?";
     
     
 }
