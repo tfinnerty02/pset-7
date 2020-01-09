@@ -237,7 +237,7 @@ public class Application {
 //            System.out.print("\nCourse No.: ");
 //            courseNo = in.next();
 //            
-//            if () {
+//            if (/* is a valid course number */) {
 //                valid = true;
 //            } else {
 //                System.out.println("\nCourse not found.");
@@ -315,8 +315,7 @@ public class Application {
         //      print the list of teachers by name an department (just like last time)
         //
     	
-    	System.out.println("Department ID: ");
-    	int inputDeptId = in.nextInt();
+    	int inputDeptId = getDepartmentSelection();
     	
     	ArrayList<Teacher> teachers = PowerSchool.getTeachersByDepartment(inputDeptId);
         
@@ -327,7 +326,7 @@ public class Application {
             
             int i = 1;
             for (Teacher teacher : teachers) {
-                System.out.println(i++ + ". " + teacher.getName() + " / " + teacher.getDepartmentName());
+                System.out.println(i++ + ". " + teacher.getName() + " / " + PowerSchool.getDepartmentTitle(inputDeptId));
             } 
         }
     	

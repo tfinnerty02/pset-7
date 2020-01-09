@@ -91,5 +91,8 @@ public class QueryUtils {
     		"SELECT first_name, last_name, teacher_id, department_id FROM teachers " +
     				"WHERE department_id = ?";
     
+    public static final String GET_DEPARTMENT_TITLE =
+    		"SELECT title FROM departments WHERE department_id =?";
+    
     
 }

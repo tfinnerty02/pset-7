@@ -397,4 +397,19 @@ public class PowerSchool {
          
          return teachers;
      }
+     
+     public static String getDepartmentTitle(int department_id) {
+    	 try(Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_DEPARTMENT_TITLE)){
+    		 stmt.setString(1, Integer.toString(department_id));
+    		 
+    		 try(ResultSet rs = stmt.executeQuery()){
+    			 while(rs.next()) {
+    				 return rs.getString("title");
+    			 }
+    		 }
+    	 }catch(SQLException e) {
+    			 e.printStackTrace();
+    	 }
+    	 return "Error";
+     }
 }
