@@ -476,7 +476,7 @@ public class PowerSchool {
         
         	 try (ResultSet rs = stmt.executeQuery()) {
                  while (rs.next()) {
-                     int returnCourseNumber = Integer.parseInt(rs.toString());
+                     return rs.getInt("course_id");
                  }
              }
         	 
@@ -485,5 +485,23 @@ public class PowerSchool {
 	     }
      
      return -1;
+     }
+     
+     public static int testCourseNo(String courseNo) {
+         
+         try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_COURSE_ID_FROM_NO)){
+    		 
+        	 stmt.setString(1, courseNo);
+                         
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                     return rs.getInt("course_id");
+                 }
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return -1;
      }
 }

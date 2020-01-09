@@ -230,7 +230,7 @@ public class Application {
      * @return the selected course
      */
 
-    private String getCourseSelection() throws SQLException {
+    private String getCourseSelection() {
         boolean valid = false;
         String courseNo = null;
         
@@ -238,9 +238,9 @@ public class Application {
             System.out.print("\nCourse No.: ");
             courseNo = in.next();
             
-            if (/* is a valid course number */) {
+            if (PowerSchool.testCourseNo(courseNo) > 0) {
                 valid = true;
-            } else {
+            } else if(PowerSchool.testCourseNo(courseNo) < 0){
                 System.out.println("\nCourse not found.");
             }
         }
@@ -396,7 +396,7 @@ public class Application {
      * Displays all students by course.
      */
 
-    private void viewStudentsByCourse() {
+    private void viewStudentsByCourse(){
         //
         // get a list of students by course
         //      to do this, you'll need to prompt the user to choose a course (more on this later)
@@ -408,7 +408,7 @@ public class Application {
         //
     	
     	int inputCourseNo = PowerSchool.getCourseIdFromNo(getCourseSelection());
-    	
+
     	ArrayList<Student> students = PowerSchool.getStudentsByCourse(inputCourseNo);
         
         if (students.isEmpty()) {
@@ -418,7 +418,12 @@ public class Application {
             
             int i = 1;
             for (Student student : students) {
-                System.out.println(i++ + ". " + student.getName() + " / " + student.getGradYear());
+            	if(student.getGpa() == -1) {
+            		System.out.println(i++ + ". " + student.getName() + " / --");
+            	}else if(student.getGpa() != -1) {
+            		System.out.println(i++ + ". " + student.getName() + " / " + student.getGpa());
+            	}
+                
             } 
         }
     }
