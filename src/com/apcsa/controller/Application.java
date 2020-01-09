@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.apcsa.data.PowerSchool;
 import com.apcsa.model.Teacher;
 import com.apcsa.model.User;
+import com.apcsa.model.Student;
 
 public class Application {
 	
@@ -110,9 +111,9 @@ public class Application {
             switch (getAdministratorMenuSelection()) {
                 case FACULTY: viewFaculty(); break;
                 case DEPARTMENT: viewFacultyByDepartment(); break;
-//                case STUDENTS: viewStudents(); break;
-//                case GRADE: viewStudentsByGrade(); break;
-//                case COURSE: viewStudentsByCourse(); break;
+                case STUDENTS: viewStudents(); break;
+                case GRADE: viewStudentsByGrade(); break;
+                case COURSE: viewStudentsByCourse(); break;
 //                case PASSWORD: changePassword(false); break;
                 case LOGOUT: logout(); break;
                 default: System.out.println("\nInvalid selection."); break;
@@ -229,23 +230,23 @@ public class Application {
      * @return the selected course
      */
 
-//    private String getCourseSelection() throws SQLException {
-//        boolean valid = false;
-//        String courseNo = null;
-//        
-//        while (!valid) {
-//            System.out.print("\nCourse No.: ");
-//            courseNo = in.next();
-//            
-//            if (/* is a valid course number */) {
-//                valid = true;
-//            } else {
-//                System.out.println("\nCourse not found.");
-//            }
-//        }
-//        
-//        return courseNo;
-//    }
+    private String getCourseSelection() throws SQLException {
+        boolean valid = false;
+        String courseNo = null;
+        
+        while (!valid) {
+            System.out.print("\nCourse No.: ");
+            courseNo = in.next();
+            
+            if (/* is a valid course number */) {
+                valid = true;
+            } else {
+                System.out.println("\nCourse not found.");
+            }
+        }
+        
+        return courseNo;
+    }
     
     
 
@@ -345,6 +346,19 @@ public class Application {
         // otherwise...
         //      print the list of students by name and graduation year
         //
+    	
+    	ArrayList<Student> students = PowerSchool.getStudents();
+        
+        if (students.isEmpty()) {
+            System.out.println("\nNo students to display.");
+        } else {
+            System.out.println();
+            
+            int i = 1;
+            for (Student student : students) {
+                System.out.println(i++ + ". " + student.getName() + " / " + student.getGradYear());
+            } 
+        }
     }
     
     /*
@@ -361,6 +375,21 @@ public class Application {
         // otherwise...
         //      print the list of students by name and class rank
         //
+    	
+    	int inputStudentGrade = getGradeSelection();
+    	
+    	ArrayList<Student> students = PowerSchool.getStudentsByGradeAndRank(inputStudentGrade);
+        
+        if (students.isEmpty()) {
+            System.out.println("\nNo students to display.");
+        } else {
+            System.out.println();
+            
+            int i = 1;
+            for (Student student : students) {
+                System.out.println(i++ + ". " + student.getName() + " / #" + student.getRank());
+            } 
+        }
     }
     
     /*
@@ -377,6 +406,21 @@ public class Application {
         // otherwise...
         //      print the list of students by name and grade point average
         //
+    	
+    	int inputCourseNo = PowerSchool.getCourseIdFromNo(getCourseSelection());
+    	
+    	ArrayList<Student> students = PowerSchool.getStudentsByCourse(inputCourseNo);
+        
+        if (students.isEmpty()) {
+            System.out.println("\nNo students to display.");
+        } else {
+            System.out.println();
+            
+            int i = 1;
+            for (Student student : students) {
+                System.out.println(i++ + ". " + student.getName() + " / " + student.getGradYear());
+            } 
+        }
     }
     
     

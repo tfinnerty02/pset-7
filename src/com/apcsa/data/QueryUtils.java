@@ -94,5 +94,16 @@ public class QueryUtils {
     public static final String GET_DEPARTMENT_TITLE =
     		"SELECT title FROM departments WHERE department_id =?";
     
+    public static final String GET_ALL_STUDENTS_SQL =
+    		"SELECT * FROM students";
+    
+    public static final String GET_STUDENTS_BY_GRADE_SORT_RANK_SQL =
+    		"SELECT * FROM students WHERE grade_level = ? ORDER BY last_name";
+    
+    public static final String GET_COURSE_ID_FROM_NO =
+    		"SELECT course_id FROM courses WHERE course_no = ?";
+    
+    public static final String GET_STUDENTS_FROM_COURSE_ID =
+    		"SELECT * FROM students INNER JOIN course_grades ON course_grades.student_id = students.student_id WHERE course_id = ? ORDER BY last_name";
     
 }

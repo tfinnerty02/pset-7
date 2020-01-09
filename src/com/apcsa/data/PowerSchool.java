@@ -412,4 +412,78 @@ public class PowerSchool {
     	 }
     	 return "Error";
      }
+     
+     public static ArrayList<Student> getStudents(){
+    	 ArrayList<Student> students = new ArrayList<Student>();
+         
+         try (Connection conn = getConnection();
+              Statement stmt = conn.createStatement()) {
+                         
+             try (ResultSet rs = stmt.executeQuery(QueryUtils.GET_ALL_STUDENTS_SQL)) {
+                 while (rs.next()) {
+                     students.add(new Student(rs));
+                 }
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return students;
+     }
+     
+     public static ArrayList<Student> getStudentsByGradeAndRank(int grade_level){
+    	 ArrayList<Student> students = new ArrayList<Student>();
+         
+         try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_STUDENTS_BY_GRADE_SORT_RANK_SQL)){
+    		 
+        	 stmt.setString(1, Integer.toString(grade_level));
+                         
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                     students.add(new Student(rs));
+                 }
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return students;
+     }
+     
+     public static ArrayList<Student> getStudentsByCourse(int course_id){
+    	 ArrayList<Student> students = new ArrayList<Student>();
+         
+         try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_STUDENTS_FROM_COURSE_ID)){
+    		 
+        	 stmt.setString(1, Integer.toString(course_id));
+                         
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                     students.add(new Student(rs));
+                 }
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return students;
+     }
+     
+     public static int getCourseIdFromNo(String course_no) {
+    	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_COURSE_ID_FROM_NO)){
+    		 
+        	 stmt.setString(1, course_no);
+        
+        	 try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                     int returnCourseNumber = Integer.parseInt(rs.toString());
+                 }
+             }
+        	 
+	     }catch (SQLException e) {
+	         e.printStackTrace();
+	     }
+     
+     return -1;
+     }
 }
