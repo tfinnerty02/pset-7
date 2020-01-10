@@ -164,7 +164,7 @@ public class QueryUtils {
     		"SELECT * FROM COURSE_GRADES WHERE student_id = ? AND course_id = ?";
     
     public static final String GET_ASSIGNMENTS_BY_STUDENT_COURSE_MP =
-    		"SELECT * FROM assignment_grades INNER JOIN assignments ON assignment_grades.course_id = assignments.course_id AND assignment_grades.assignment_id = assignments.assignment_id WHERE student_id = ? AND assignments.course_id = ? AND ? = ?";
+    		"SELECT * FROM assignment_grades INNER JOIN assignments ON assignment_grades.course_id = assignments.course_id AND assignment_grades.assignment_id = assignments.assignment_id WHERE student_id = ? AND assignments.course_id = ? AND marking_period = ?";
     
     
     

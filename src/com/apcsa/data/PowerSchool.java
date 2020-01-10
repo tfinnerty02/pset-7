@@ -923,8 +923,8 @@ public class PowerSchool {
         	 stmt.setString(1, Integer.toString(student_id));
         	 
         	 if(marking_period <= 4) {
-        		 stmt.setString(3, "marking_period");
-        		 stmt.setString(4, Integer.toString(marking_period));
+//        		 stmt.setString(3, "marking_period");
+        		 stmt.setString(3, Integer.toString(marking_period));
         	 }else if(marking_period > 4) {
         		 if(marking_period == 5) {
         			 stmt.setString(5, "is_midterm");
