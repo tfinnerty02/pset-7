@@ -586,6 +586,7 @@ public class Application {
     
     private int getAssignmentIdSelection(int course_id, int marking_period, int is_midterm, int is_final) {
     	ArrayList<String> assignments = PowerSchool.getAssignmentsByCourseAndMP(course_id, marking_period, is_midterm, is_final);
+    	ArrayList<Integer> assignmentIds = PowerSchool.getAssignmentsByCourseAndMPIds(course_id, marking_period, is_midterm, is_final);
     	
     	if (assignments.isEmpty()) {
             System.out.println("\nNo courses to display.");
@@ -603,7 +604,7 @@ public class Application {
 	            System.out.print("\n::: ");
 	            selection = Utils.getInt(in, -1);
 
-	            return selection;
+	            return assignmentIds.get(selection-1);
 	            
         	}
         }
@@ -777,8 +778,11 @@ public class Application {
     		System.out.println("Grade entering cancelled.\n");
     	}
     	
-//    	PowerSchool.updateCourseGrade(inputMPSelection, studentId, courseId, (PowerSchool.getTotalPointsEarned(studentId, courseId)/PowerSchool.getTotalPointsPossible(studentId, courseId)));
-//    	PowerSchool.updateCourseGrade(7, studentId, courseId, Utils.getGrade(PowerSchool.getCourseGrades(studentId, courseId)));
+    	PowerSchool.updateCourseGrade(inputMPSelection, studentId, courseId, (PowerSchool.getTotalPointsEarned(studentId, courseId)/PowerSchool.getTotalPointsPossible(studentId, courseId)));
+    	
+//    	Double[] courseGrades = PowerSchool.getCourseGrades(studentId, courseId);
+//    	
+//    	PowerSchool.updateCourseGrade(7, studentId, courseId, Utils.getGrade(courseGrades));
     }
     
     

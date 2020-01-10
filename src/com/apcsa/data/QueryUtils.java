@@ -152,10 +152,10 @@ public class QueryUtils {
     		"SELECT * FROM students, courses INNER JOIN course_grades ON students.student_id=course_grades.student_id AND courses.course_id = course_grades.course_id WHERE students.student_id = ?";
     		
     public static final String UPDATE_COURSE_GRADE =
-    		"UPDATE course_grades SET ? WHERE student_id = ? AND course_id = ?";
+    		"UPDATE course_grades SET ? = ? WHERE student_id = ? AND course_id = ?";
     
     public static final String GET_SPECIFIC_STUDENT_COURSE_INFO =
-    		"SELECT * FROM students, courses INNER JOIN course_grades ON students.student_id=course_grades.student_id AND courses.course_id = course_grades.course_id WHERE students.student_id = ? AND courses.course_id = ?";
+    		"SELECT * FROM students, courses INNER JOIN course_grades ON students.student_id=course_grades.student_id AND courses.course_id = course_grades.course_id WHERE students.student_id = ? AND courses.course_id = ? AND NOT NULL";
 
     public static final String GET_ASSIGNMENTS_BY_STUDENT_AND_COURSE =
     		"SELECT * FROM assignment_grades WHERE student_id = ? AND course_id = ?";

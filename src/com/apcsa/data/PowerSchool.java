@@ -642,6 +642,28 @@ public class PowerSchool {
          return assignments;
      }
      
+     public static ArrayList<Integer> getAssignmentsByCourseAndMPIds(int course_id, int marking_period, int is_midterm, int is_final){
+    	 ArrayList<Integer> assignments = new ArrayList<Integer>();
+         
+         try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_ASSIGNMENTS_BY_COURSE_MP)){
+    		 
+        	 stmt.setString(1, Integer.toString(course_id));
+        	 stmt.setString(2, Integer.toString(marking_period));
+        	 stmt.setString(3, Integer.toString(is_midterm));
+        	 stmt.setString(4, Integer.toString(is_final));
+                         
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                     assignments.add(rs.getInt("assignment_id"));
+                 }
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return assignments;
+     }
+     
      public static boolean enterAssignmentGrade(int assignment_id, int course_id, int student_id, double points_earned, double points_possible) {
     	 try ( Connection conn = getConnection();
          		PreparedStatement stmt = conn.prepareStatement(QueryUtils.CREATE_ASSIGNMENT_GRADE_SQL)) {
@@ -781,9 +803,9 @@ public class PowerSchool {
     		     		
              conn.setAutoCommit(false);
              stmt.setString(1, markingPeriod);
-             stmt.setString(2, Integer.toString(student_id));
-             stmt.setString(3, Integer.toString(course_id));
-             stmt.setString(4, Double.toString(grade_value));
+             stmt.setString(3, Integer.toString(student_id));
+             stmt.setString(4, Integer.toString(course_id));
+             stmt.setString(2, Double.toString(grade_value));
 
              if (stmt.executeUpdate() == 1) {
                  conn.commit();
@@ -829,7 +851,7 @@ public class PowerSchool {
         	 stmt.setString(1, Integer.toString(student_id));
         	                          
              try (ResultSet rs = stmt.executeQuery()) {
-                 
+                 	
                      gradeArray[0] = (rs.getDouble("mp1"));
                      gradeArray[1] = (rs.getDouble("mp2"));
                      gradeArray[3] = (rs.getDouble("mp3"));
