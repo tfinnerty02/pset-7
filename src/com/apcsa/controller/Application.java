@@ -129,7 +129,7 @@ public class Application {
             switch (getTeacherMenuSelection()) {
                 case STUDENTS_COURSE: viewStudentsByCourseTeacher(); break;
                 case ADD_ASS: addAssignment(); break;
-//                case DEL_ASS: delAssignment(); break;
+                case DEL_ASS: delAssignment(); break;
 //                case GRADE_ASS: enterAssignmentGrade(); break;
                 case PASSWORD: changePassword(false); break;
                 case LOGOUT: logout(); break;
@@ -550,6 +550,32 @@ public class Application {
     
     }
     
+    private int getAssignmentIdSelection(int course_id, int marking_period, int is_midterm, int is_final) {
+    	ArrayList<String> assignments = PowerSchool.getAssignmentsByCourseAndMP(course_id, marking_period, is_midterm, is_final);
+    	
+    	if (assignments.isEmpty()) {
+            System.out.println("\nNo courses to display.");
+        } else {
+            System.out.println();
+            int selection = -1;
+        	System.out.println("\nChoose a course.\n");
+        	while (selection < 1 || selection > 6) {
+       
+	            int i = 1;
+	            for (String assignment : assignments) {
+	                System.out.println("[" + i++ + "] " + assignment);
+	            } 
+	            
+	            selection = Utils.getInt(in, -1);
+
+	            return selection;
+	            
+        	}
+        }
+    	
+    	return -1;
+    }
+    
     private void viewStudentsByCourseTeacher() {
     	
     	String courseName = getCourseByTeacherSelection(PowerSchool.getTeacherId(activeUser.getUserId()));
@@ -585,7 +611,7 @@ public class Application {
 	    	System.out.println("Point Value: ");
 	    	inputPointValue = in.nextDouble();
 	    	
-	    	if(inputPointValue > 1 && inputPointValue < 100) {
+	    	if(inputPointValue >= 1 && inputPointValue <= 100) {
 	    		validInput = true;
 	    	}else if(!(inputPointValue > 1 && inputPointValue < 100)) {
 	    		System.out.println("Point values must be between 1 and 100.");
@@ -593,6 +619,31 @@ public class Application {
     	}
     	
     	PowerSchool.addAssignment(PowerSchool.getCourseIdFromNo(courseName), PowerSchool.getAssignmentNo(PowerSchool.getCourseIdFromNo(courseName))+1, inputMarkingPeriod, inputIsMidterm, inputIsFinal, inputTitle, inputPointValue);
+    	
+    	
+    }
+    
+    public void delAssignment() {
+    	
+    	String courseName = getCourseByTeacherSelection(PowerSchool.getTeacherId(activeUser.getUserId()));
+    	int courseId = PowerSchool.getCourseIdFromNo(courseName);
+    	int inputIsFinal = -1;
+    	int inputIsMidterm = -1;
+    	int inputMarkingPeriod = -1;
+    	
+    	int inputMPSelection = getMarkingPeriodSelection();
+    	
+    	if(inputMPSelection == 5) {
+    		inputIsMidterm = 1;
+    	}else if(inputMPSelection == 6) {
+    		inputIsFinal = 1;
+    	}else if(inputMPSelection != 5 && inputMPSelection != 6) {
+    		inputMarkingPeriod = inputMPSelection;
+    	}
+    	
+    	int assignmentId = getAssignmentIdSelection(courseId, inputMarkingPeriod, inputIsMidterm, inputIsFinal);
+    	
+    	PowerSchool.delAssignment(assignmentId, courseId);
     	
     	
     }

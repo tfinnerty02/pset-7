@@ -596,7 +596,7 @@ public class PowerSchool {
          return -1;
      }
      
-     public boolean delAssignment(int assignment_id, int course_id) {
+     public static boolean delAssignment(int assignment_id, int course_id) {
     	 try ( Connection conn = getConnection();
           		PreparedStatement stmt = conn.prepareStatement(QueryUtils.DELETE_ASSIGNMENT_SQL)) {
 
@@ -618,6 +618,28 @@ public class PowerSchool {
 
               return false;
           }
+     }
+     
+     public static ArrayList<String> getAssignmentsByCourseAndMP(int course_id, int marking_period, int is_midterm, int is_final){
+    	 ArrayList<String> assignments = new ArrayList<String>();
+         
+         try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_ASSIGNMENTS_BY_COURSE_MP)){
+    		 
+        	 stmt.setString(1, Integer.toString(course_id));
+        	 stmt.setString(2, Integer.toString(marking_period));
+        	 stmt.setString(3, Integer.toString(is_midterm));
+        	 stmt.setString(4, Integer.toString(is_final));
+                         
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                     assignments.add(rs.getString("title") + "(" + rs.getInt("point_value") + " pts)");
+                 }
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return assignments;
      }
      
      
