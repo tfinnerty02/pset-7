@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS users; 
 CREATE TABLE IF NOT EXISTS users (
 	user_id INTEGER PRIMARY KEY AUTOINCREMENT,
     account_type TEXT NOT NULL,
@@ -916,7 +916,7 @@ CREATE TABLE IF NOT EXISTS assignment_grades (
     points_earned INTEGER,
     points_possible INTEGER NOT NULL,
     FOREIGN KEY (course_id) REFERENCES courses (course_id),
-    FOREIGN KEY (assignment_id) REFERENCES assignemnts (assignment_id),
+    FOREIGN KEY (assignment_id) REFERENCES assignments (assignment_id),
     FOREIGN KEY (student_id) REFERENCES students (student_id),
     PRIMARY KEY (course_id, assignment_id, student_id)
 );

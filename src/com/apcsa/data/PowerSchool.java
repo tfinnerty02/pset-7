@@ -916,4 +916,96 @@ public class PowerSchool {
      }
      
      
+     public static double getTotalPointsEarnedByMP(int student_id, int course_id, int marking_period) {
+    	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_ASSIGNMENTS_BY_STUDENT_COURSE_MP)){
+    		 
+    		 stmt.setString(2, Integer.toString(course_id));
+        	 stmt.setString(1, Integer.toString(student_id));
+        	 
+        	 if(marking_period <= 4) {
+        		 stmt.setString(3, "marking_period");
+        		 stmt.setString(4, Integer.toString(marking_period));
+        	 }else if(marking_period > 4) {
+        		 if(marking_period == 5) {
+        			 stmt.setString(5, "is_midterm");
+        			 stmt.setString(6, "1");
+        		 }else if(marking_period == 6) {
+        			 stmt.setString(5, "is_final");
+        			 stmt.setString(6, "1");
+        		 }
+        	 }
+        	 
+        	 double pointsEarned = 0;
+        	 
+        	 System.out.println("Executing query\n");
+        	 
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                	 System.out.println("points_possible");
+                	 System.out.println(rs.getString("points_earned"));
+                     pointsEarned += rs.getDouble("points_earned");
+                 }
+             }
+             
+             return pointsEarned;
+            		 
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return -1;
+    	
+     }
+     
+     public static double getTotalPointsPossibleByMP(int student_id, int course_id, int marking_period) {
+    	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_ASSIGNMENTS_BY_STUDENT_COURSE_MP)){
+    		 
+    		 stmt.setString(2, Integer.toString(course_id));
+        	 stmt.setString(1, Integer.toString(student_id));
+        	 
+        	 if(marking_period <= 4) {
+        		 stmt.setString(3, "marking_period");
+        		 stmt.setString(4, Integer.toString(marking_period));
+        	 }else if(marking_period > 4) {
+        		 if(marking_period == 5) {
+        			 stmt.setString(5, "is_midterm");
+        			 stmt.setString(6, "1");
+        		 }else if(marking_period == 6) {
+        			 stmt.setString(5, "is_final");
+        			 stmt.setString(6, "1");
+        		 }
+        	 }
+        	         	 
+        	 double pointsEarned = 0;
+        	 
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                	 System.out.println(rs.getString("points_possible"));
+                     pointsEarned += rs.getDouble("points_possible");
+                 }
+             }
+             
+             return pointsEarned;
+            		 
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return -1;
+    	
+     }
+     
+     
+     public static double generateGrade(int marking_period, int course_id, int student_id) {
+    	 
+    	 System.out.println(getTotalPointsEarnedByMP(student_id, course_id, marking_period));
+    	 System.out.println(getTotalPointsPossibleByMP(student_id, course_id, marking_period));
+    	 
+    	 double grade = (getTotalPointsEarnedByMP(student_id, course_id, marking_period) )/ (getTotalPointsPossibleByMP(student_id,course_id, marking_period));
+    	 
+    	 return grade;
+    	 
+     }
+     
+     
 }

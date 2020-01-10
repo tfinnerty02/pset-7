@@ -778,12 +778,16 @@ public class Application {
     		System.out.println("Grade entering cancelled.\n");
     	}
     	
-    	PowerSchool.updateCourseGrade(inputMPSelection, studentId, courseId, (PowerSchool.getTotalPointsEarned(studentId, courseId)/PowerSchool.getTotalPointsPossible(studentId, courseId)));
+    	System.out.print("\n" + Double.toString(PowerSchool.generateGrade(inputMPSelection, courseId, studentId)));
+    	
+//    	PowerSchool.updateCourseGrade(inputMPSelection, studentId, courseId, PowerSchool.generateGrade());
     	
 //    	Double[] courseGrades = PowerSchool.getCourseGrades(studentId, courseId);
 //    	
 //    	PowerSchool.updateCourseGrade(7, studentId, courseId, Utils.getGrade(courseGrades));
     }
+    
+    
     
     
 
