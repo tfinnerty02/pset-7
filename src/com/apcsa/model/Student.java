@@ -67,5 +67,13 @@ public class Student extends User {
     public int getRank() {
     	return classRank;
     }
+    
+    public int getStudentId() {
+    	return studentId;
+    }
+    
+    public String getFirstName() {
+    	return firstName;
+    }
 	
 }

@@ -64,6 +64,9 @@ public class Teacher extends User {
 		return teacherId;
 	}
 	
+	public String getFirstName() {
+		return firstName;
+	}
 	
 	private int teacherId;
     private int departmentId;

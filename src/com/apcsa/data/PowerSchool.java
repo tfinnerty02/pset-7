@@ -642,5 +642,256 @@ public class PowerSchool {
          return assignments;
      }
      
+     public static boolean enterAssignmentGrade(int assignment_id, int course_id, int student_id, double points_earned, double points_possible) {
+    	 try ( Connection conn = getConnection();
+         		PreparedStatement stmt = conn.prepareStatement(QueryUtils.CREATE_ASSIGNMENT_GRADE_SQL)) {
+
+             conn.setAutoCommit(false);
+             stmt.setString(1, Integer.toString(course_id));
+             stmt.setString(2, Integer.toString(assignment_id));
+             stmt.setString(3, Integer.toString(student_id));
+             stmt.setString(4, Double.toString(points_earned));
+             stmt.setString(5, Double.toString(points_possible));
+             
+
+             if (stmt.executeUpdate() == 1) {
+                 conn.commit();
+
+                 return true;
+             } else {
+                 conn.rollback();
+
+                 return false;
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+
+             return false;
+         }
+     }
+     
+     public static double getAssignmentPointsPossible(int assignment_id, int course_id) {
+    	 	try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_POINTS_POSSIBLE_FROM_ASSIGNMENT_SQL)){
+    		 
+        	 stmt.setString(1, Integer.toString(course_id));
+        	 stmt.setString(2,  Integer.toString(assignment_id));
+        	                          
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                     return rs.getDouble("point_value");
+                 }
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return -1;
+     }
+     
+     public static String getAssignmentName( int assignment_id, int course_id) {
+    	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_ASSIGNMENT_NAME)){
+    		 
+        	 stmt.setString(2, Integer.toString(course_id));
+        	 stmt.setString(1,  Integer.toString(assignment_id));
+        	                          
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                     return rs.getString("title");
+                 }
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return null;
+     	}
+     
+     public static String getStudentName(int student_id) {
+    	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_STUDENT_NAME)){
+    		 
+        	 stmt.setString(1, Integer.toString(student_id));
+        	                          
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                     return (rs.getString("last_name") + ", " + rs.getString("first_name"));
+                 }
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return null;
+  
+     }
+     
+     public static boolean doesItHaveGrade(int course_id, int assignment_id, int student_id) {
+    	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_ASSIGNMENT_GRADE)){
+    		 
+    		 stmt.setString(1, Integer.toString(course_id));
+    		 stmt.setString(2, Integer.toString(assignment_id));
+        	 stmt.setString(3, Integer.toString(student_id));
+        	                          
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                	 return true;
+                     
+                 }
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return false;
+     }
+     
+     public static double getAssignmentGrade(int course_id, int assignment_id, int student_id) {
+    	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_ASSIGNMENT_GRADE)){
+    		 
+    		 stmt.setString(1, Integer.toString(course_id));
+    		 stmt.setString(2, Integer.toString(assignment_id));
+        	 stmt.setString(3, Integer.toString(student_id));
+        	                          
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                     return rs.getDouble("points_earned");
+                 }
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return -1;
+     }
+     
+     public static boolean updateCourseGrade(int grade_period, int student_id, int course_id, double grade_value) {
+    	 try ( Connection conn = getConnection();
+         		PreparedStatement stmt = conn.prepareStatement(QueryUtils.UPDATE_COURSE_GRADE)) {
+
+    		 String markingPeriod = "";
+    		 
+    		 switch(grade_period) {
+    		 	case 1: markingPeriod = "mp1";break;
+    		 	case 2: markingPeriod = "mp2";break;
+    		 	case 3: markingPeriod = "mp3";break;
+    		 	case 4: markingPeriod = "mp4";break;
+    		 	case 5: markingPeriod = "midterm_exam";break;
+    		 	case 6: markingPeriod = "final_exam";break;
+    		 	case 7: markingPeriod = "grade";break;
+    		 }
+    		     		
+             conn.setAutoCommit(false);
+             stmt.setString(1, markingPeriod);
+             stmt.setString(2, Integer.toString(student_id));
+             stmt.setString(3, Integer.toString(course_id));
+             stmt.setString(4, Double.toString(grade_value));
+
+             if (stmt.executeUpdate() == 1) {
+                 conn.commit();
+
+                 return true;
+             } else {
+                 conn.rollback();
+
+                 return false;
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+
+             return false;
+         }
+     }
+     
+     public static boolean doesItHaveGrade(int course_id, int student_id) {
+    	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_ASSIGNMENT_GRADE)){
+    		 
+    		 stmt.setString(2, Integer.toString(course_id));
+        	 stmt.setString(1, Integer.toString(student_id));
+        	                          
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                	 return true;
+                     
+                 }
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return false;
+     }
+     
+     public static Double[] getCourseGrades(int student_id, int course_id) {
+    	 Double[] gradeArray = new Double[6];
+    	 
+    	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_SPECIFIC_STUDENT_COURSE_INFO)){
+    		 
+    		 stmt.setString(2, Integer.toString(course_id));
+        	 stmt.setString(1, Integer.toString(student_id));
+        	                          
+             try (ResultSet rs = stmt.executeQuery()) {
+                 
+                     gradeArray[0] = (rs.getDouble("mp1"));
+                     gradeArray[1] = (rs.getDouble("mp2"));
+                     gradeArray[3] = (rs.getDouble("mp3"));
+                     gradeArray[4] = (rs.getDouble("mp4"));
+                     gradeArray[2] = (rs.getDouble("midterm_exam"));
+                     gradeArray[5] = (rs.getDouble("final_exam"));
+                 
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return null;
+     }
+     
+     public static double getTotalPointsPossible(int student_id, int course_id) {
+    	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_ASSIGNMENTS_BY_STUDENT_AND_COURSE)){
+    		 
+    		 stmt.setString(2, Integer.toString(course_id));
+        	 stmt.setString(1, Integer.toString(student_id));
+        	 
+        	 double pointsPossible = 0;
+        	 
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                     pointsPossible += rs.getDouble("points_possible");
+                 }
+             }
+             
+             return pointsPossible;
+            		 
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return -1;
+    	
+     }
+     
+     public static double getTotalPointsEarned(int student_id, int course_id) {
+    	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_ASSIGNMENTS_BY_STUDENT_AND_COURSE)){
+    		 
+    		 stmt.setString(2, Integer.toString(course_id));
+        	 stmt.setString(1, Integer.toString(student_id));
+        	 
+        	 double pointsEarned = 0;
+        	 
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                     pointsEarned += rs.getDouble("points_earned");
+                 }
+             }
+             
+             return pointsEarned;
+            		 
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return -1;
+    	
+     }
+     
      
 }

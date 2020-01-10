@@ -22,6 +22,10 @@ public class Administrator extends User {
 	    this.lastName = rs.getString("last_name");
 	    this.jobTitle = rs.getString("job_title");
 	}
+	
+	public String getFirstName() {
+		return firstName;
+	}
     
 	private int administratorId;
     private String firstName;

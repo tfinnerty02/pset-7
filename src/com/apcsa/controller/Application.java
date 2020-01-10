@@ -6,6 +6,7 @@ import com.apcsa.data.PowerSchool;
 import com.apcsa.model.Teacher;
 import com.apcsa.model.User;
 import com.apcsa.model.Student;
+import com.apcsa.data.QueryUtils;
 
 public class Application {
 	
@@ -86,6 +87,8 @@ public class Application {
             showAdministratorUI();
         } else if(activeUser.isTeacher()){
             showTeacherUI();
+        } else if(activeUser.isStudent()) {
+        	showStudentUI();
         }
     }
     
@@ -130,9 +133,21 @@ public class Application {
                 case STUDENTS_COURSE: viewStudentsByCourseTeacher(); break;
                 case ADD_ASS: addAssignment(); break;
                 case DEL_ASS: delAssignment(); break;
-//                case GRADE_ASS: enterAssignmentGrade(); break;
+                case GRADE_ASS: enterAssignmentGrade(); break;
                 case PASSWORD: changePassword(false); break;
                 case LOGOUT: logout(); break;
+                default: System.out.println("\nInvalid selection."); break;
+            }
+        }
+    }
+    
+    private void showStudentUI() {
+        while (activeUser != null) {
+            switch (getStudentMenuSelection()) {
+                case StudentAction.COURSE_GRADE: viewCourseGrades(); break;
+                case StudentAction.COURSE_ASS: viewAssignmentGradesByCourse(); break;
+                case StudentAction.PASSWORD: changePassword(false); break;
+                case StudentAction.LOGOUT: logout(); break;
                 default: System.out.println("\nInvalid selection."); break;
             }
         }
@@ -215,6 +230,24 @@ public class Application {
         
         return null;
     }
+    
+    private StudentAction getStudentMenuSelection() {
+        System.out.println();
+        
+        System.out.println("[1] View course grades.");
+        System.out.println("[2] View assignment grades by course.");
+        System.out.println("[3] Change password.");
+        System.out.println("[4] Logout.");
+        System.out.print("\n::: ");
+        
+        switch (Utils.getInt(in, -1)) {
+            case 1: return StudentAction.COURSE_GRADE;
+            case 2: return StudentAction.COURSE_ASS;
+            case 3: return StudentAction.PASSWORD;
+            case 4: return StudentAction.LOGOUT;
+            default: return null;
+        }
+     }
     
     /*
      * Retrieves the user's department selection.
@@ -537,6 +570,7 @@ public class Application {
 	                System.out.println("[" + i++ + "] " + course);
 	            } 
 	            
+	            System.out.print("\n::: ");
 	            selection = Utils.getInt(in, -1);
 	            
 	            String selectedCourse = courseNames.get(selection-1);
@@ -566,6 +600,7 @@ public class Application {
 	                System.out.println("[" + i++ + "] " + assignment);
 	            } 
 	            
+	            System.out.print("\n::: ");
 	            selection = Utils.getInt(in, -1);
 
 	            return selection;
@@ -600,7 +635,7 @@ public class Application {
     		inputMarkingPeriod = inputMPSelection;
     	}
     	
-    	System.out.println("Assignment Title: ");
+    	System.out.print("\nAssignment Title: ");
     	String inputTitle = in.nextLine();
     	
     	double inputPointValue = -1;
@@ -608,7 +643,7 @@ public class Application {
     	
     	while(!(validInput)) {
     	
-	    	System.out.println("Point Value: ");
+	    	System.out.print("Point Value: ");
 	    	inputPointValue = in.nextDouble();
 	    	
 	    	if(inputPointValue >= 1 && inputPointValue <= 100) {
@@ -617,9 +652,13 @@ public class Application {
 	    		System.out.println("Point values must be between 1 and 100.");
 	    	}
     	}
-    	
-    	PowerSchool.addAssignment(PowerSchool.getCourseIdFromNo(courseName), PowerSchool.getAssignmentNo(PowerSchool.getCourseIdFromNo(courseName))+1, inputMarkingPeriod, inputIsMidterm, inputIsFinal, inputTitle, inputPointValue);
-    	
+    	boolean confirm = Utils.confirm(in, "\nAre you sure you want to create this assignment? (y/n)");
+    	if(confirm) {
+    		System.out.print("\nSuccessfully created assignment.\n");
+    		PowerSchool.addAssignment(PowerSchool.getCourseIdFromNo(courseName), PowerSchool.getAssignmentNo(PowerSchool.getCourseIdFromNo(courseName))+1, inputMarkingPeriod, inputIsMidterm, inputIsFinal, inputTitle, inputPointValue);
+    	}else if(!confirm) {
+    		System.out.print("\nAssignment creation cancelled.\n");
+    	}
     	
     }
     
@@ -643,9 +682,103 @@ public class Application {
     	
     	int assignmentId = getAssignmentIdSelection(courseId, inputMarkingPeriod, inputIsMidterm, inputIsFinal);
     	
-    	PowerSchool.delAssignment(assignmentId, courseId);
+    	boolean confirm = Utils.confirm(in, "Are you sure you want to delete this assignment?");
+    	if(confirm) {
+    		System.out.print("\nSuccessfully deleted " + PowerSchool.getAssignmentName(assignmentId, courseId) + ".\n");
+    		PowerSchool.delAssignment(assignmentId, courseId);
+    	}else if(!confirm) {
+    		System.out.print("\nDeletion of " + PowerSchool.getAssignmentName(assignmentId, courseId) + " cancelled.\n");
+    	}
+    	
+    }
+    
+    public int getStudentIdFromCourseSelection(int course_id) {
+    	ArrayList<Student> students = PowerSchool.getStudentsByCourse(course_id);
+    	
+    	if (students.isEmpty()) {
+            System.out.println("\nNo students to display.");
+        } else {
+            System.out.println();
+            int selection = -1;
+        	System.out.println("\nChoose a student.\n");
+        	while (selection < 1 || selection > 6) {
+       
+	            int i = 1;
+	            for (Student student : students) {
+	                System.out.println("[" + i++ + "] " + student.getName());
+	            } 
+	            
+	            System.out.print("\n::: ");
+	            
+	            selection = Utils.getInt(in, -1);
+
+	            return students.get(selection-1).getStudentId();
+	            
+        	}
+        }
+    	
+    	return -1;
+    }
+    
+    public void enterAssignmentGrade() {
+    	String courseName = getCourseByTeacherSelection(PowerSchool.getTeacherId(activeUser.getUserId()));
+    	int courseId = PowerSchool.getCourseIdFromNo(courseName);
+    	int inputIsFinal = -1;
+    	int inputIsMidterm = -1;
+    	int inputMarkingPeriod = -1;
+    	
+    	int inputMPSelection = getMarkingPeriodSelection();
+    	
+    	if(inputMPSelection == 5) {
+    		inputIsMidterm = 1;
+    	}else if(inputMPSelection == 6) {
+    		inputIsFinal = 1;
+    	}else if(inputMPSelection != 5 && inputMPSelection != 6) {
+    		inputMarkingPeriod = inputMPSelection;
+    	}
     	
     	
+    	
+    	int assignmentId = getAssignmentIdSelection(courseId, inputMarkingPeriod, inputIsMidterm, inputIsFinal);
+    	
+    	double assignmentPointsPossible = PowerSchool.getAssignmentPointsPossible(assignmentId, courseId); 
+    	
+    	int studentId = getStudentIdFromCourseSelection(courseId);
+    	
+    	System.out.println("Assignment: " + PowerSchool.getAssignmentName(assignmentId, courseId));
+    	System.out.println("Student: " + PowerSchool.getStudentName(studentId));
+    	if(!PowerSchool.doesItHaveGrade(courseId, assignmentId, studentId)) {
+    		System.out.println("Current Grade: --");
+    	}else if(PowerSchool.doesItHaveGrade(courseId, assignmentId, studentId)) {
+    		System.out.println("Current Grade: " + Double.toString(PowerSchool.getAssignmentGrade(courseId, assignmentId, studentId)));
+    	}
+    	
+    	double inputPointValue = -1;
+    	boolean validInput = false;
+    	
+    	while(!(validInput)) {
+    	
+	    	System.out.print("\nNew Grade: ");
+	    	inputPointValue = in.nextDouble();
+	    	
+	    	if(inputPointValue >= 0 && inputPointValue <= assignmentPointsPossible) {
+	    		validInput = true;
+	    	}else if(!(inputPointValue > 0 && inputPointValue < assignmentPointsPossible)) {
+	    		System.out.println("Point values must be between 0 and " + Double.toString(assignmentPointsPossible) + ".");
+	    	}
+    	}
+    	
+    	boolean confirmGrade = Utils.confirm(in,"Are you sure you want to enter this grade? (y/n)");
+    	
+    	if(confirmGrade) {    	
+    		PowerSchool.enterAssignmentGrade(assignmentId, courseId, studentId, inputPointValue, assignmentPointsPossible);
+    		System.out.println("Successfully entered grade.\n");
+    	}else if(!confirmGrade) {
+    		System.out.println("Grade entering cancelled.\n");
+    	}
+    	
+//    	PowerSchool.updateCourseGrade(inputMPSelection, studentId, courseId, (PowerSchool.getTotalPointsEarned(studentId, courseId)/PowerSchool.getTotalPointsPossible(studentId, courseId)));
+//    	PowerSchool.updateCourseGrade(7, studentId, courseId, Utils.getGrade(PowerSchool.getCourseGrades(studentId, courseId)));
     }
     
     
@@ -678,19 +811,19 @@ public class Application {
         //      it'll be the same as their username
     	
     	if(isFirstLogin()) {
-    		System.out.println("Enter new password: ");
+    		System.out.print("\nEnter new password: ");
     		String newPass = in.next();
     		PowerSchool.updatePassword(activeUser.getUsername(), Utils.getHash(newPass));
     	}else if(!isFirstLogin()) {
-    		System.out.println("Enter current password: ");
+    		System.out.print("\nEnter current password: ");
     		String currentPass = in.next();
-    		System.out.println("Enter new password: ");
+    		System.out.print("Enter new password: ");
     		String newPass = in.next();
     		if(PowerSchool.login(activeUser.getUsername(), currentPass) != null) {
     			PowerSchool.updatePassword(activeUser.getUsername(), Utils.getHash(newPass));
-    			System.out.println("Successfully changed password.");
+    			System.out.println("\nSuccessfully changed password.");
     		}else if(PowerSchool.login(activeUser.getUsername(), currentPass) == null) {
-    			System.out.println("Invalid current password.");
+    			System.out.println("\nInvalid current password.");
     		}
     	}
     	
@@ -765,7 +898,7 @@ public class Application {
         //      set activeUser to null
         //
     	
-    	if(Utils.confirm(in, "Are you sure you want to logout? (y/n) ")){
+    	if(Utils.confirm(in, "\nAre you sure you want to logout? (y/n) ")){
     		activeUser = null;
     	}else {
     		System.out.println("Logout cancelled.");
