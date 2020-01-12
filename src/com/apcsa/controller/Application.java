@@ -714,7 +714,7 @@ public class Application {
     	
     	int assignmentId = getAssignmentIdSelection(courseId, inputMarkingPeriod, inputIsMidterm, inputIsFinal);
     	
-    	boolean confirm = Utils.confirm(in, "Are you sure you want to delete this assignment? (y/n)");
+    	boolean confirm = Utils.confirm(in, "\nAre you sure you want to delete this assignment? (y/n)");
     	if(confirm) {
     		System.out.print("\nSuccessfully deleted " + PowerSchool.getAssignmentName(assignmentId, courseId) + ".\n");
     		PowerSchool.delAssignment(assignmentId, courseId);

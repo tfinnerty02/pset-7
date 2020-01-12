@@ -608,7 +608,7 @@ public class PowerSchool {
 
               if (stmt.executeUpdate() == 1) {
                   conn.commit();
-
+                  deleteAssignmentGrades(course_id,assignment_id);
                   return true;
               } else {
                   conn.rollback();
@@ -847,7 +847,9 @@ public class PowerSchool {
      }
      
      public static Double[] getCourseGrades(int student_id, int course_id) {
-    	 ArrayList<Double> gradeArray = new ArrayList<Double>();
+    	 
+    	 Double[] gradeArray = new Double[6];
+    	 
     	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_SPECIFIC_STUDENT_COURSE_INFO)){
     		 
     		 stmt.setString(2, Integer.toString(course_id));
@@ -858,52 +860,42 @@ public class PowerSchool {
              try (ResultSet rs = stmt.executeQuery()) {
 
                 	 while(rs.next()) {
-            	 
-            	 		String composite = "";
-
+            	 		
             	 		if(rs.getString("mp1") != null ) {
-            	 				composite += rs.getString("mp1") + " ";
+            	 				gradeArray[0] = rs.getDouble("mp1");
+            	 		}else if(rs.getString("mp1") == null) {
+            	 				gradeArray[0] = null;
             	 		}
 	            	 		if(rs.getString("mp2") != null ) {
-	        	 				composite += rs.getString("mp2") + " ";
+	            	 			gradeArray[1] = rs.getDouble("mp2");
+	        	 		}else if(rs.getString("mp2") == null) {
+	        	 				gradeArray[1] = null;
 	        	 		}
+	            	 		
+	            	 		if(rs.getString("midterm_exam") != null ) {
+	            	 			gradeArray[2] = rs.getDouble("midterm_exam");
+	        	 		}else if(rs.getString("midterm_exam") == null) {
+	        	 				gradeArray[2] = null;
+	        	 		}
+	            	 		
 	            	 		if(rs.getString("mp3") != null ) {
-	        	 				composite += rs.getString("mp3") + " ";
+	            	 			gradeArray[3] = rs.getDouble("mp3");
+	        	 		}else if(rs.getString("mp3") == null) {
+	        	 				gradeArray[3] = null;
 	        	 		}
 	            	 		if(rs.getString("mp4") != null ) {
-	        	 				composite += rs.getString("mp4") + " ";
+	            	 			gradeArray[4] = rs.getDouble("mp4");
+	        	 		}else if(rs.getString("mp4") == null) {
+	        	 				gradeArray[4] = null;
 	        	 		}
-	            	 		if(rs.getString("midterm_exam") != null ) {
-	        	 				composite += rs.getString("midterm_exam") + " ";
-	        	 		}
+	            	 		
 	            	 		if(rs.getString("final_exam") != null ) {
-	        	 				composite += rs.getString("final_exam") + " ";
-	        	 		}
-//            	 				
-            	 		String[] compositeArrayPreProcessing = composite.split(" ");
-            	 		String processedArrayString = "";
+	            	 			gradeArray[5] = rs.getDouble("final_exam");
+	        	 		}      else if(rs.getString("final_exam") == null) {
+	        	 				gradeArray[5] = null;
+	        	 		}   	 		
             	 		
-            	 		for(int i = 0; i < compositeArrayPreProcessing.length-1; i++) {
-            	 			
-            	 			if(compositeArrayPreProcessing[i] != null) {
-            	 				if(i == 0) {
-            	 					processedArrayString += compositeArrayPreProcessing[i];
-            	 				}else {
-            	 					processedArrayString += "," + compositeArrayPreProcessing[i];
-            	 				}
-            	 			}
-            	 		}
-            	 		
-            	 		String[] processedArray = processedArrayString.split(",");
-            	 		
-            	 		
-            	 		for(int j = 0; j < processedArray.length-1; j++) {
-            	 			gradeArray.add(Double.parseDouble(processedArray[j]));
-            	 		}
-            	 		
-            	 		Double[] gradeArrayDouble =  gradeArray.toArray(new Double[gradeArray.size()]);
-            	 		
-            	 		return gradeArrayDouble;
+            	 		return gradeArray;
             	 		
                 	 }
                  }
