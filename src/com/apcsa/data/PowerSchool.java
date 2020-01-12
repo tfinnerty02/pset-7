@@ -1309,4 +1309,28 @@ public class PowerSchool {
          
          return courses;
      }
+     
+     public static int deleteAssignmentGrades(int course_id, int assignment_id) {
+    	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.DEL_ASSIGNMENTS_GRADES_COURSE_ASSIGNMENT_ID)) {
+
+             conn.setAutoCommit(false);
+             stmt.setString(1, Integer.toString(course_id));
+             stmt.setString(2, Integer.toString(assignment_id));
+
+             if (stmt.executeUpdate() == 1) {
+                 conn.commit();
+
+                 return 1;
+             } else {
+                 conn.rollback();
+
+                 return -1;
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+
+             return -1;
+         }
+     }
+     
 }
