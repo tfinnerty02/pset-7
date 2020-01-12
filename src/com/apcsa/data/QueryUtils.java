@@ -187,6 +187,6 @@ public class QueryUtils {
     public static final String GET_ASSIGNMENTS_INFO_BY_STUDENT_AND_COURSE =
     		"SELECT * FROM assignment_grades INNER JOIN assignments ON assignment_grades.assignment_id = assignments.assignment_id WHERE student_id = ? AND course_id = ?";
     
-    public static final STRING DEL_ASSIGNMENTS_COURSE_ASSIGNMENT_ID =
+    public static final String DEL_ASSIGNMENTS_GRADES_COURSE_ASSIGNMENT_ID =
     		"DELETE FROM assignment_grades WHERE course_id = ? AND assignment_id = ?";
 }
