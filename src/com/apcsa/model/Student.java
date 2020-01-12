@@ -75,5 +75,9 @@ public class Student extends User {
     public String getFirstName() {
     	return firstName;
     }
+    
+    public int getClassRank() {
+    	return classRank;
+    }
 	
 }

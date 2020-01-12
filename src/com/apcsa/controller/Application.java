@@ -144,10 +144,10 @@ public class Application {
     private void showStudentUI() {
         while (activeUser != null) {
             switch (getStudentMenuSelection()) {
-                case StudentAction.COURSE_GRADE: viewCourseGrades(); break;
-                case StudentAction.COURSE_ASS: viewAssignmentGradesByCourse(); break;
-                case StudentAction.PASSWORD: changePassword(false); break;
-                case StudentAction.LOGOUT: logout(); break;
+                case COURSE_GRADE: viewCourseGrades(); break;
+                case COURSE_ASS: viewAssignmentGradesByCourse(); break;
+                case PASSWORD: changePassword(false); break;
+                case LOGOUT: logout(); break;
                 default: System.out.println("\nInvalid selection."); break;
             }
         }
@@ -546,7 +546,7 @@ public class Application {
             	if(student.getGpa() == -1) {
             		System.out.println(i++ + ". " + student.getName() + " / --");
             	}else if(student.getGpa() != -1) {
-            		System.out.println(i++ + ". " + student.getName() + " / " + student.getGpa());
+            		System.out.println(i++ + ". " + student.getName() + " / " + PowerSchool.getGrade(student.getStudentId(),inputCourseNo));
             	}
                 
             } 
@@ -556,6 +556,37 @@ public class Application {
     private String getCourseByTeacherSelection(int teacher_id) {
     	
     	ArrayList<String> courseNames = PowerSchool.getCoursesByTeacher(teacher_id);
+    	
+    	if (courseNames.isEmpty()) {
+            System.out.println("\nNo courses to display.");
+        } else {
+            System.out.println();
+            int selection = -1;
+        	System.out.println("\nChoose a course.\n");
+        	while (selection < 1 || selection > 6) {
+       
+	            int i = 1;
+	            for (String course : courseNames) {
+	                System.out.println("[" + i++ + "] " + course);
+	            } 
+	            
+	            System.out.print("\n::: ");
+	            selection = Utils.getInt(in, -1);
+	            
+	            String selectedCourse = courseNames.get(selection-1);
+	            return selectedCourse;
+	            
+        	}
+        }
+    	
+    	return null;
+    	
+    
+    }
+    
+    private String getCourseByStudentSelection(int student_id) {
+    	
+    	ArrayList<String> courseNames = PowerSchool.getCoursesByStudent(student_id);
     	
     	if (courseNames.isEmpty()) {
             System.out.println("\nNo courses to display.");
@@ -683,7 +714,7 @@ public class Application {
     	
     	int assignmentId = getAssignmentIdSelection(courseId, inputMarkingPeriod, inputIsMidterm, inputIsFinal);
     	
-    	boolean confirm = Utils.confirm(in, "Are you sure you want to delete this assignment?");
+    	boolean confirm = Utils.confirm(in, "Are you sure you want to delete this assignment? (y/n)");
     	if(confirm) {
     		System.out.print("\nSuccessfully deleted " + PowerSchool.getAssignmentName(assignmentId, courseId) + ".\n");
     		PowerSchool.delAssignment(assignmentId, courseId);
@@ -778,16 +809,73 @@ public class Application {
     		System.out.println("Grade entering cancelled.\n");
     	}
     	
-    	System.out.print("\n" + Double.toString(PowerSchool.generateGrade(inputMPSelection, courseId, studentId)));
+    	PowerSchool.updateCourseGrade(inputMPSelection, studentId, courseId, PowerSchool.generateGrade(inputMPSelection, courseId, studentId));
+    
+    	Double[] courseGrades = PowerSchool.getCourseGrades(studentId, courseId);
     	
-//    	PowerSchool.updateCourseGrade(inputMPSelection, studentId, courseId, PowerSchool.generateGrade());
+    	PowerSchool.updateCourseGrade(7, studentId, courseId,Utils.getGrade(courseGrades));
     	
-//    	Double[] courseGrades = PowerSchool.getCourseGrades(studentId, courseId);
-//    	
-//    	PowerSchool.updateCourseGrade(7, studentId, courseId, Utils.getGrade(courseGrades));
+    	PowerSchool.updateGPA(PowerSchool.generateGPA(studentId,courseId),studentId);
+    	
+    	ArrayList<Student> rankList = Utils.updateRanks(PowerSchool.getStudents(PowerSchool.getStudentGradYear(studentId)));
+    	
+    	for(int i = 0; i < rankList.size()-1; i++) {
+    		if(rankList.get(i).getGpa() != -1.0) {
+    			if(i>0) {
+	    			if((rankList.get(i).getGpa() == rankList.get(i-1).getGpa())){
+	    				PowerSchool.updateClassRank(rankList.get(i-1).getClassRank(), rankList.get(i).getStudentId());
+	    			}else if(!(rankList.get(i).getGpa() == rankList.get(i-1).getGpa())) {
+	    			PowerSchool.updateClassRank(i+1,rankList.get(i).getStudentId());
+	    			}
+    			}
+    		}else if(rankList.get(i).getGpa() == -1.0) {
+    			PowerSchool.updateClassRank(0,rankList.get(i).getStudentId());
+    		}
+    	}
     }
     
+    public void viewCourseGrades() {
+    	ArrayList<String> coursesAndGrades = PowerSchool.getGrade((PowerSchool.getStudentId(activeUser.getUserId()))); 
+    	
+    	if (coursesAndGrades.isEmpty()) {
+            System.out.println("\nNo courses to display.");
+        } else {
+            System.out.println();
+            int i = 1;
+	            for (String courseAndGrade : coursesAndGrades) {
+	                System.out.println(i++ + ". " + courseAndGrade);
+	            }
+	            
+        }
+    }
     
+    public void viewAssignmentGradesByCourse() {
+    	
+    	int studentId = PowerSchool.getStudentId(activeUser.getUserId());
+    	
+    	String courseNo = getCourseByStudentSelection(studentId);
+    	
+    	int courseId = PowerSchool.getCourseIdFromNo(courseNo);
+    	
+    	int inputIsFinal = -1;
+    	int inputIsMidterm = -1;
+    	int inputMarkingPeriod = -1;
+    	
+    	int inputMPSelection = getMarkingPeriodSelection();
+    	
+    	ArrayList<String> assignmentsAndGrades = PowerSchool.getCourseAssignmentsGrade(studentId, courseId, inputMPSelection);
+    	
+    	if (assignmentsAndGrades.isEmpty()) {
+            System.out.println("\nNo assignments to display.");
+        } else {
+            System.out.println();
+            int i = 1;
+	            for (String assignmentAndGrade : assignmentsAndGrades) {
+	                System.out.println(i++ + ". " + assignmentAndGrade);
+	            }
+	            
+        }
+    }
     
     
 

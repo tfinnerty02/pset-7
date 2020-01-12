@@ -19,6 +19,8 @@ import com.apcsa.model.Administrator;
 import com.apcsa.model.Student;
 import com.apcsa.model.Teacher;
 import com.apcsa.model.User;
+import java.util.stream.*;
+import java.util.*;
 
 public class PowerSchool {
 
@@ -786,26 +788,28 @@ public class PowerSchool {
      }
      
      public static boolean updateCourseGrade(int grade_period, int student_id, int course_id, double grade_value) {
+    	 
+    	 String query = QueryUtils.UPDATE_COURSE_GRADE;
+		 
+		 switch(grade_period) {
+		 	case 1: query += "mp1";break;
+		 	case 2: query += "mp2";break;
+		 	case 3: query += "mp3";break;
+		 	case 4: query += "mp4";break;
+		 	case 5: query += "midterm_exam";break;
+		 	case 6: query += "final_exam";break;
+		 	case 7: query += "grade";break;
+		 }
+		     		
+		 String secondHalf = " = " + Double.toString(grade_value) + " WHERE student_id = " + Integer.toString(student_id) + " AND course_id = " + Integer.toString(course_id);
+		 
+		 String completeQuery = query + secondHalf;
+    	 
     	 try ( Connection conn = getConnection();
-         		PreparedStatement stmt = conn.prepareStatement(QueryUtils.UPDATE_COURSE_GRADE)) {
+         		PreparedStatement stmt = conn.prepareStatement(completeQuery)) {
 
-    		 String markingPeriod = "";
     		 
-    		 switch(grade_period) {
-    		 	case 1: markingPeriod = "mp1";break;
-    		 	case 2: markingPeriod = "mp2";break;
-    		 	case 3: markingPeriod = "mp3";break;
-    		 	case 4: markingPeriod = "mp4";break;
-    		 	case 5: markingPeriod = "midterm_exam";break;
-    		 	case 6: markingPeriod = "final_exam";break;
-    		 	case 7: markingPeriod = "grade";break;
-    		 }
-    		     		
              conn.setAutoCommit(false);
-             stmt.setString(1, markingPeriod);
-             stmt.setString(3, Integer.toString(student_id));
-             stmt.setString(4, Integer.toString(course_id));
-             stmt.setString(2, Double.toString(grade_value));
 
              if (stmt.executeUpdate() == 1) {
                  conn.commit();
@@ -843,23 +847,70 @@ public class PowerSchool {
      }
      
      public static Double[] getCourseGrades(int student_id, int course_id) {
-    	 Double[] gradeArray = new Double[6];
-    	 
+    	 ArrayList<Double> gradeArray = new ArrayList<Double>();
     	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_SPECIFIC_STUDENT_COURSE_INFO)){
     		 
     		 stmt.setString(2, Integer.toString(course_id));
         	 stmt.setString(1, Integer.toString(student_id));
+        	 
+        	 
         	                          
              try (ResultSet rs = stmt.executeQuery()) {
-                 	
-                     gradeArray[0] = (rs.getDouble("mp1"));
-                     gradeArray[1] = (rs.getDouble("mp2"));
-                     gradeArray[3] = (rs.getDouble("mp3"));
-                     gradeArray[4] = (rs.getDouble("mp4"));
-                     gradeArray[2] = (rs.getDouble("midterm_exam"));
-                     gradeArray[5] = (rs.getDouble("final_exam"));
-                 
-             }
+
+                	 while(rs.next()) {
+            	 
+            	 		String composite = "";
+
+            	 		if(rs.getString("mp1") != null ) {
+            	 				composite += rs.getString("mp1") + " ";
+            	 		}
+	            	 		if(rs.getString("mp2") != null ) {
+	        	 				composite += rs.getString("mp2") + " ";
+	        	 		}
+	            	 		if(rs.getString("mp3") != null ) {
+	        	 				composite += rs.getString("mp3") + " ";
+	        	 		}
+	            	 		if(rs.getString("mp4") != null ) {
+	        	 				composite += rs.getString("mp4") + " ";
+	        	 		}
+	            	 		if(rs.getString("midterm_exam") != null ) {
+	        	 				composite += rs.getString("midterm_exam") + " ";
+	        	 		}
+	            	 		if(rs.getString("final_exam") != null ) {
+	        	 				composite += rs.getString("final_exam") + " ";
+	        	 		}
+//            	 				
+            	 		String[] compositeArrayPreProcessing = composite.split(" ");
+            	 		String processedArrayString = "";
+            	 		
+            	 		for(int i = 0; i < compositeArrayPreProcessing.length-1; i++) {
+            	 			
+            	 			if(compositeArrayPreProcessing[i] != null) {
+            	 				if(i == 0) {
+            	 					processedArrayString += compositeArrayPreProcessing[i];
+            	 				}else {
+            	 					processedArrayString += "," + compositeArrayPreProcessing[i];
+            	 				}
+            	 			}
+            	 		}
+            	 		
+            	 		String[] processedArray = processedArrayString.split(",");
+            	 		
+            	 		
+            	 		for(int j = 0; j < processedArray.length-1; j++) {
+            	 			gradeArray.add(Double.parseDouble(processedArray[j]));
+            	 		}
+            	 		
+            	 		Double[] gradeArrayDouble =  gradeArray.toArray(new Double[gradeArray.size()]);
+            	 		
+            	 		return gradeArrayDouble;
+            	 		
+                	 }
+                 }
+             
+            	
+            	 		
+             
          } catch (SQLException e) {
              e.printStackTrace();
          }
@@ -917,15 +968,22 @@ public class PowerSchool {
      
      
      public static double getTotalPointsEarnedByMP(int student_id, int course_id, int marking_period) {
-    	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_ASSIGNMENTS_BY_STUDENT_COURSE_MP)){
+    	 
+    	 String query = QueryUtils.GET_ASSIGNMENTS_BY_STUDENT_COURSE_MP;
+		 
+		 switch(marking_period) {
+		 	case 1: query += "marking_period = 1";break;
+		 	case 2: query += "marking_period = 2";break;
+		 	case 3: query += "marking_period = 3";break;
+		 	case 4: query += "marking_period = 4";break;
+		 	case 5: query += "is_midterm = 1";break;
+		 	case 6: query += "is_final = 1";break;
+		 }
+    	 
+    	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(query)){
     		 
     		 stmt.setString(2, Integer.toString(course_id));
         	 stmt.setString(1, Integer.toString(student_id));
-        	 
-        	 if(marking_period <= 4) {
-//        		 stmt.setString(3, "marking_period");
-        		 stmt.setString(3, Integer.toString(marking_period));
-        	 }
         	 
         	 double pointsEarned = 0;
         	         	 
@@ -946,15 +1004,24 @@ public class PowerSchool {
      }
      
      public static double getTotalPointsPossibleByMP(int student_id, int course_id, int marking_period) {
-    	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_ASSIGNMENTS_BY_STUDENT_COURSE_MP)){
-    		 
+    	 
+    	 String query = QueryUtils.GET_ASSIGNMENTS_BY_STUDENT_COURSE_MP;
+		 
+		 switch(marking_period) {
+		 	case 1: query += "marking_period = 1";break;
+		 	case 2: query += "marking_period = 2";break;
+		 	case 3: query += "marking_period = 3";break;
+		 	case 4: query += "marking_period = 4";break;
+		 	case 5: query += "is_midterm = 1";break;
+		 	case 6: query += "is_final = 1";break;
+		 }
+		     		
+		 
+    	 
+    	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(query)){
+    		
+    		 stmt.setString(1, Integer.toString(student_id));
     		 stmt.setString(2, Integer.toString(course_id));
-        	 stmt.setString(1, Integer.toString(student_id));
-        	 
-        	 if(marking_period <= 4) {
-//        		 stmt.setString(3, "marking_period");
-        		 stmt.setString(3, Integer.toString(marking_period));
-        	 }
         	         	 
         	 double pointsEarned = 0;
         	 
@@ -983,5 +1050,263 @@ public class PowerSchool {
     	 
      }
      
+     public static double generateGPA(int student_id, int course_id) {
+    	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_COURSES_GRADE_SQL)){
+    		 
+        	 stmt.setString(2, Integer.toString(course_id));
+        	 stmt.setString(1,  Integer.toString(student_id));
+        	 
+        	 double totalGPA = 0.0;
+        	 int classCount = 0;
+        	                          
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                     double grade =  rs.getDouble("grade");
+                     classCount++;
+                     grade = Math.round(grade);
+                     
+                     double gpaGrade = 0.0;
+                     
+                     if(grade >= 97 && grade <= 100) {
+                    	 gpaGrade = 4.0;
+                     }else if(grade >= 93 && grade <= 96) {
+                    	 gpaGrade = 4.0;
+                     }else if(grade >= 90 && grade <= 92) {
+                    	 gpaGrade = 3.7;
+                     }else if(grade >= 87 && grade <= 89) {
+                    	 gpaGrade = 3.3;
+                     }else if(grade >= 83 && grade <= 86) {
+                    	 gpaGrade = 3.0;
+                     }else if(grade >= 80 && grade <= 82) {
+                    	 gpaGrade = 2.7;
+                     }else if(grade >= 77 && grade <= 79) {
+                    	 gpaGrade = 2.3;
+                     }else if(grade >= 73 && grade <= 76) {
+                    	 gpaGrade = 2.0;
+                     }else if(grade >= 70 && grade <= 72) {
+                    	 gpaGrade = 1.7;
+                     }else if(grade >= 67 && grade <= 69) {
+                    	 gpaGrade = 1.3;
+                     }else if(grade >= 65 && grade <= 66) {
+                    	 gpaGrade = 1.0;
+                     }else if(grade < 65) {
+                    	 gpaGrade = 0.0;
+                     }
+                     
+                     totalGPA += gpaGrade;
+                     
+                     }
+                 
+                 return totalGPA/classCount;
+                 
+                 }
+             
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return -1.0;
+     }
      
+     public static int updateGPA(double gpa, int student_id) {
+         try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.UPDATE_GPA_SQL)) {
+
+             conn.setAutoCommit(false);
+             stmt.setString(1, Double.toString(gpa));
+             stmt.setString(2, Integer.toString(student_id));
+
+             if (stmt.executeUpdate() == 1) {
+                 conn.commit();
+
+                 return 1;
+             } else {
+                 conn.rollback();
+
+                 return -1;
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+
+             return -1;
+         }
+     }
+     
+     public static int updateClassRank(int rank, int student_id) {
+    	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.UPDATE_RANK_SQL)) {
+
+             conn.setAutoCommit(false);
+             stmt.setString(1, Double.toString(rank));
+             stmt.setString(2, Integer.toString(student_id));
+
+             if (stmt.executeUpdate() == 1) {
+                 conn.commit();
+
+                 return 1;
+             } else {
+                 conn.rollback();
+
+                 return -1;
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+
+             return -1;
+         }
+     }
+     
+     public static double getGrade(int student_id, int course_id) {
+    	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_COURSES_GRADE_SQL)){
+        	 
+        	 stmt.setString(1, Integer.toString(student_id));
+        	 stmt.setString(2, Integer.toString(course_id));
+                         
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                      return rs.getDouble("grade");
+                 }
+             }
+             
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return -1;
+     }
+     
+     public static ArrayList<String> getGrade(int student_id) {
+    	 ArrayList<String> coursesAndGrades = new ArrayList<String>();
+    	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_ALL_STUDENT_COURSE_INFO)){
+        	 
+        	 stmt.setString(1, Integer.toString(student_id));
+                         
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                	 	String courseGrade = "";
+                	 	if(rs.getString("grade") == null) {
+                	 		courseGrade = "--";
+                	 	}else if(rs.getString("grade") != null) {
+                	 		courseGrade = rs.getString("grade");
+                	 	}
+                       coursesAndGrades.add(rs.getString("title") + " / " + courseGrade);
+                 }
+             }
+             
+             return coursesAndGrades;
+             
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return null;
+     }
+     
+     public static int getStudentId(int user_id) {
+         
+         try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_STUDENT_ID_FROM_USER_ID_SQL)){
+    		 
+        	 stmt.setString(1, Integer.toString(user_id));
+                         
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                     return rs.getInt("student_id");
+                 }
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return -1;
+     }
+     
+     public static ArrayList<Student> getStudents(int gradYear){
+    	 ArrayList<Student> students = new ArrayList<Student>();
+    	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_ALL_STUDENTS_BY_YEAR_SQL)){
+    		 
+        	 stmt.setString(1, Integer.toString(gradYear));
+                         
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                	 students.add(new Student(rs));
+                 }
+             }
+         }catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return students;
+     }
+     
+     public static int getStudentGradYear(int student_id) {
+         
+         try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_GRAD_YEAR_SQL)){
+    		 
+        	 stmt.setString(1, Integer.toString(student_id));
+                         
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                     return rs.getInt("graduation");
+                 }
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return -1;
+     }
+     
+     public static ArrayList<String> getCourseAssignmentsGrade(int student_id, int course_id, int marking_period) {
+    	 ArrayList<String> assignmentsAndGrades = new ArrayList<String>();
+    	 
+    	 String query = QueryUtils.GET_ASSIGNMENTS_BY_STUDENT_COURSE_MP;
+		 
+		 switch(marking_period) {
+		 	case 1: query += "marking_period = 1";break;
+		 	case 2: query += "marking_period = 2";break;
+		 	case 3: query += "marking_period = 3";break;
+		 	case 4: query += "marking_period = 4";break;
+		 	case 5: query += "is_midterm = 1";break;
+		 	case 6: query += "is_final = 1";break;
+		 }
+		     		
+		 
+    	 
+    	 try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(query)){
+    		
+    		 stmt.setString(1, Integer.toString(student_id));
+    		 stmt.setString(2, Integer.toString(course_id));
+                         
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                	 	
+                       assignmentsAndGrades.add(rs.getString("title") + " / " + rs.getString("points_earned") + " (out of " + rs.getString("points_possible") + ")");
+                 }
+             }
+             
+             return assignmentsAndGrades;
+             
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return null;
+     }
+     
+     public static ArrayList<String> getCoursesByStudent(int student_id){
+    	 ArrayList<String> courses = new ArrayList<String>();
+         
+         try (Connection conn = getConnection();PreparedStatement stmt = conn.prepareStatement(QueryUtils.GET_ALL_STUDENT_COURSE_INFO)){
+    		 
+        	 stmt.setString(1, Integer.toString(student_id));
+                         
+             try (ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                     courses.add(rs.getString("course_no"));
+                 }
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         return courses;
+     }
 }
